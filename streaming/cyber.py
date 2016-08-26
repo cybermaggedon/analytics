@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import sys
-import wye.context
+import wye
 
+# URL of wye service
 url = "http://localhost:8080"
 
-context = wye.context.StreamingContext(url)
+context = wye.Context(url)
 
 job = context.define_job(name="cybermon",
                          description="Cybermon stream processor")
@@ -14,13 +15,11 @@ dnsact = job.define_python_worker("dns-activity", "dns_activity.py")
 
 webact = job.define_python_worker("web-activity", "web_activity.py")
 
-src = job.define_python_worker("subscriber", "cybermon_subscriber.py",
-                               {
-                                   "output": [
-                                       (webact, "input"),
-                                       (dnsact, "input")
-                                   ]
-                               })
+fp = job.define_python_worker("fingerprinter", "fingerprinter.py")
+
+src = job.define_python_worker("subscriber", "cybermon_subscriber.py")
+src.connect("output", [(webact, "input"), (dnsact, "input"),
+                       (fp, "input")])
 
 job_id = job.implement()
 

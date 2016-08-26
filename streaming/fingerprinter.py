@@ -6,6 +6,7 @@ import sys
 import requests
 import md5
 import time
+import socket
 
 from httplib2 import Http
 from oauth2client.service_account import ServiceAccountCredentials
@@ -52,7 +53,7 @@ binding = "tcp://localhost:5555"
 private = "private.json"
 project = None
 dataset = "cyberprobe"
-table = "fingerprint"
+table = "fingerprint2"
 
 ############################################################################
 
