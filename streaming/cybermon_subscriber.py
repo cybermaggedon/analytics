@@ -5,13 +5,13 @@ import zmq
 import random
 import json
 import socket
-import wye.context
+import wye
 
 print "INIT"
 
 # ---------------------------------------------------------------------------
 
-sockets = wye.context.parse_outputs(sys.argv[1:])
+sockets = wye.parse_outputs(sys.argv[1:])
 
 # ---------------------------------------------------------------------------
 

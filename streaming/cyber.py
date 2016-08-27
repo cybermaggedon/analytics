@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import sys
-import wye.context
+import wye
 
 url = "http://localhost:8080"
 
-context = wye.context.StreamingContext(url)
+context = wye.Context(url)
 
 job = context.define_job(name="cybermon",
                          description="Cybermon stream processor")
