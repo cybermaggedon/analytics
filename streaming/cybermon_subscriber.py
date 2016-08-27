@@ -32,6 +32,9 @@ def handle(msg):
     
 
 while True:
-    msg = skt.recv()
-    handle(msg)
+    try:
+        msg = skt.recv()
+        handle(msg)
+    except:
+        time.sleep(0.1)
 

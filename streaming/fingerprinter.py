@@ -409,6 +409,9 @@ def handle(msg):
 ############################################################################
 
 while True:
-    msg = skt.recv()
-    handle(json.loads(msg))
+    try:
+        msg = skt.recv()
+        handle(json.loads(msg))
+    except:
+        time.sleep(0.1)
 

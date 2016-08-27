@@ -208,4 +208,6 @@ while True:
         if (time.time() - last_curate) > curation_time:
             curate()
         time.sleep(0.1)
+    except:
+        time.sleep(0.1)
 
