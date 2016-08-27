@@ -53,7 +53,7 @@ binding = "tcp://localhost:5555"
 private = "private.json"
 project = None
 dataset = "cyberprobe"
-table = "fingerprint2"
+table = "fingerprint"
 
 ############################################################################
 
