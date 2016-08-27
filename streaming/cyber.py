@@ -3,6 +3,7 @@
 import sys
 import wye
 
+# URL of wye service
 url = "http://localhost:8080"
 
 context = wye.Context(url)
@@ -14,13 +15,11 @@ dnsact = job.define_python_worker("dns-activity", "dns_activity.py")
 
 webact = job.define_python_worker("web-activity", "web_activity.py")
 
-src = job.define_python_worker("subscriber", "cybermon_subscriber.py",
-                               {
-                                   "output": [
-                                       (webact, "input"),
-                                       (dnsact, "input")
-                                   ]
-                               })
+fp = job.define_python_worker("fingerprinter", "fingerprinter.py")
+
+src = job.define_python_worker("subscriber", "cybermon_subscriber.py")
+src.connect("output", [(webact, "input"), (dnsact, "input"),
+                       (fp, "input")])
 
 job_id = job.implement()
 
