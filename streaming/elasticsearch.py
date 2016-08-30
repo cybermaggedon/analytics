@@ -5,6 +5,8 @@ import json
 import sys
 import requests
 import socket
+import os
+import time
 
 ############################################################################
 
@@ -22,11 +24,11 @@ sys.stdout.flush()
 
 ############################################################################
     
-es_index = "cyberprobe"
-es_object = "observation"
+es_index = os.getenv("ELASTICSEARCH_INDEX", "cyberprobe")
+es_object = os.getenv("ELASTICSEARCH_OBJECT", "observation")
 
 if len(sys.argv) < 2:
-    es_url = "http://localhost:9200/"
+    es_url = os.getenv("ELASTICSEARCH_URL", "http://localhost:9200")
 else:
     es_url = sys.argv[1]
 
@@ -125,14 +127,12 @@ def handle(msg):
 
 ############################################################################
 
-ctxt = zmq.Context()
-skt = ctxt.socket(zmq.SUB)
-skt.connect(binding)
-skt.setsockopt(zmq.SUBSCRIBE, "")
-
 init()
 
 while True:
-    msg = skt.recv()
-    handle(json.loads(msg))
+    try:
+        msg = skt.recv()
+        handle(json.loads(msg))
+    except:
+        time.sleep(0.1)
 

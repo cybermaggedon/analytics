@@ -8,6 +8,8 @@ import uuid
 import sys
 import requests
 import socket
+import os
+import time
 
 ############################################################################
 
@@ -25,10 +27,7 @@ sys.stdout.flush()
 
 ############################################################################
 
-if len(sys.argv) < 2:
-    gaffer = "http://gaffer:8080/example-rest/v1"
-else:
-    gaffer = sys.argv[1]
+gaffer = os.getenv("GAFFER_URL", "http://localhost:8080/example-rest/v1")
 
 ############################################################################
 
@@ -409,14 +408,13 @@ def handle(msg):
 
 ############################################################################
 
-ctxt = zmq.Context()
-skt = ctxt.socket(zmq.SUB)
-skt.connect(binding)
-skt.setsockopt(zmq.SUBSCRIBE, "")
-
 init()
 
 while True:
-    msg = skt.recv()
-    handle(json.loads(msg))
+    try:
+        msg = skt.recv()
+        handle(json.loads(msg))
+    except:
+        time.sleep(0.1)
+
 

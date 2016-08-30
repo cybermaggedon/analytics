@@ -7,6 +7,7 @@ import requests
 import md5
 import time
 import socket
+import os
 
 from httplib2 import Http
 from oauth2client.service_account import ServiceAccountCredentials
@@ -19,10 +20,10 @@ trust_time = 86400
 
 ############################################################################
 
-private = "private.json"
-project = None
-dataset = "cyberprobe"
-table = "fingerprint"
+private = os.getenv("KEY", "private.json")
+project = os.getenv("BIGQUERY_PROJECT", None)
+dataset = os.getenv("BIGQUERY_DATASET","cyberprobe")
+table = os.getenv("TRUST_TABLE","fingerprint2")
 
 ############################################################################
 

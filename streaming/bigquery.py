@@ -5,6 +5,8 @@ import json
 import sys
 import requests
 import socket
+import os
+import time
 
 from httplib2 import Http
 from oauth2client.service_account import ServiceAccountCredentials
@@ -59,10 +61,10 @@ sys.stdout.flush()
 
 ############################################################################
 
-private = "private.json"
-project = None
-dataset = "cyberprobe"
-table = "cyberprobe"
+private = os.getenv("KEY", "private.json")
+project = os.getenv("BIGQUERY_PROJECT", None)
+dataset = os.getenv("BIGQUERY_DATASET", "cyberprobe")
+table = os.getenv("RAW_TABLE", "cyberprobe2")
 
 ############################################################################
 
@@ -503,14 +505,14 @@ def handle(msg):
 
 ############################################################################
 
-ctxt = zmq.Context()
-skt = ctxt.socket(zmq.SUB)
-skt.connect(binding)
-skt.setsockopt(zmq.SUBSCRIBE, "")
-
 init()
 
 while True:
-    msg = skt.recv()
-    handle(json.loads(msg))
+    try:
+        msg = skt.recv()
+        handle(json.loads(msg))
+    except:
+        time.sleep(0.1)
+
+
 

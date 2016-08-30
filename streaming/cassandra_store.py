@@ -8,6 +8,8 @@ import uuid
 import sys
 import requests
 import socket
+import os
+import time
 from cassandra.cluster import Cluster
 
 ############################################################################
@@ -26,10 +28,8 @@ sys.stdout.flush()
 
 ############################################################################
 
-if len(sys.argv) < 2:
-    contacts = ["127.0.0.1"]
-else:
-    contacts = json.loads("[" + sys.argv[1] + "]")
+keyspace = os.getenv("CASSANDRA_KEYSPACE", "rdf")
+contacts = json.loads(os.getenv("CASSANDRA_CONTACTS","[\"127.0.0.1\"]"))
 
 ############################################################################
 
@@ -371,17 +371,25 @@ def handle(msg):
 
 cluster = Cluster(contacts)
 
-session = cluster.connect()
+while True:
+    try:
+        session = cluster.connect()
+        break
+    except:
+        sys.stderr.write("Could not connect to Cassandra, retry...\n")
+        time.sleep(5)
+
+sys.stderr.write("Connected to Cassandra.\n")
 
 try:
     session.execute("""
-    CREATE KEYSPACE rdf WITH REPLICATION = {
+    CREATE KEYSPACE %s WITH REPLICATION = {
     'class': 'SimpleStrategy', 'replication_factor': '1'
-    }""")
+    }""" % keyspace)
 except:
     pass
 
-session.set_keyspace("rdf")
+session.set_keyspace(keyspace)
 
 try:
     session.execute("""
@@ -412,14 +420,14 @@ BEGIN BATCH
 APPLY BATCH;
 """)
 
-ctxt = zmq.Context()
-skt = ctxt.socket(zmq.SUB)
-skt.connect(binding)
-skt.setsockopt(zmq.SUBSCRIBE, "")
-
 init()
 
 while True:
-    msg = skt.recv()
-    handle(json.loads(msg))
+    try:
+        msg = skt.recv()
+        handle(json.loads(msg))
+    except:
+        time.sleep(0.1)
+
+
 

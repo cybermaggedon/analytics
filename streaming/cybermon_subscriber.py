@@ -6,6 +6,7 @@ import random
 import json
 import socket
 import wye
+import os
 
 # ---------------------------------------------------------------------------
 
@@ -13,7 +14,7 @@ print "INIT"
 sockets = wye.parse_outputs(sys.argv[1:])
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.SUB)
-port = skt.connect(os.getenv(BINDING))
+port = skt.connect(os.getenv("CYBERMON_BINDING","tcp://localhost:5555"))
 skt.setsockopt(zmq.SUBSCRIBE, "")
 print "RUNNING"
 sys.stdout.flush()

@@ -1,3 +1,10 @@
 
+VERSION=0.01a
+
 container:
-	sudo docker build -t analytics .
+	docker build -t gcr.io/trust-networks/analytics:${VERSION} .
+
+
+push:
+	gcloud docker push gcr.io/trust-networks/analytics:${VERSION}
+

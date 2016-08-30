@@ -5,6 +5,7 @@ import zmq
 import socket
 import json
 import socket
+import os
 
 from httplib2 import Http
 from oauth2client.service_account import ServiceAccountCredentials
@@ -18,10 +19,10 @@ curation_time = 5
 
 ############################################################################
 
-private = "private.json"
-project = None
-dataset = "cyberprobe"
-table = "activity"
+private = os.getenv("KEY", "private.json")
+project = os.getenv("BIGQUERY_PROJECT", None)
+dataset = os.getenv("BIGQUERY_DATASET","cyberprobe")
+table = os.getenv("ACTIVITY_TABLE","activity2")
 
 ############################################################################
 
