@@ -28,17 +28,17 @@ spec:
     - name: CASSANDRA_KEYSPACE
       value: rdf
     - name: CASSANDRA_CONTACTS
-      value: '["127.0.0.1"]'
+      value: '["10.142.0.6"]'
     - name: CYBERMON_BINDING
-      value: tcp://localhost:5555
+      value: tcp://10.142.0.2:5555
     - name: ELASTICSEARCH_INDEX
       value: cyberprobe
     - name: ELASTICSEARCH_OBJECT
       value: observation
     - name: ELASTICSEARCH_URL
-      value: http://elasticsearch:9200
+      value: http://10.142.0.4:9200
     - name: GAFFER_URL
-      value: http://gaffer:8080/example-rest/v1
+      value: http://10.142.0.3:8080/example-rest/v1
     ports:
     - containerPort: 8080
   volumes:
