@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: analytics
-    image: gcr.io/trust-networks/analytics:0.01a
+    image: gcr.io/trust-networks/analytics:mvp2a
     volumeMounts:
     - name: keys
       mountPath: /wye/key
@@ -28,7 +28,7 @@ spec:
     - name: CASSANDRA_KEYSPACE
       value: rdf
     - name: CASSANDRA_CONTACTS
-      value: "['127.0.0.1']"
+      value: '["127.0.0.1"]'
     - name: CYBERMON_BINDING
       value: tcp://localhost:5555
     - name: ELASTICSEARCH_INDEX
