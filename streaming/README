@@ -1,0 +1,6 @@
+
+
+
+kubectl create -f analytics-pod.yaml
+
+#kubectl export deployment analytics-pod --target-port=8080 --type=Load

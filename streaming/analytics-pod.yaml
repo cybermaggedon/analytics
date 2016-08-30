@@ -1,0 +1,13 @@
+apiVersion: 1
+kind: pod
+metadata:
+  name: analytics
+spec:
+  containers:
+  - name: analytics
+    image: gcr.io/trust-networks/analytics:0.01
+    env:
+    - name: BINDING
+      value: tcp://localhost:5555
+    ports:
+    - containerPort: 8080

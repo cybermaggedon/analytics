@@ -13,7 +13,7 @@ print "INIT"
 sockets = wye.parse_outputs(sys.argv[1:])
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.SUB)
-port = skt.connect("tcp://localhost:5555")
+port = skt.connect(os.getenv(BINDING))
 skt.setsockopt(zmq.SUBSCRIBE, "")
 print "RUNNING"
 sys.stdout.flush()
