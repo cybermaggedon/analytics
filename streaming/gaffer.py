@@ -13,8 +13,6 @@ import time
 
 ############################################################################
 
-sys.stderr = open("gaffer.err","w")
-
 fqdn = socket.getfqdn()
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.PULL)
@@ -26,8 +24,6 @@ print "INIT"
 print "INPUT:input:%s" % input
 print "RUNNING"
 sys.stdout.flush()
-
-sys.stdout = open("gaffer.err","w")
 
 ############################################################################
 
