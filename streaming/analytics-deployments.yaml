@@ -49,3 +49,74 @@ spec:
       - name: keys
 	secret:
 	  secretName: keys
+----
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: cassandra
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: analytics
+    spec:
+      containers:
+      - name: cassandra
+	image: cassandra:3.7
+	ports:
+	- containerPort: 7000
+	  name: intra-node
+	- containerPort: 7001
+	  name: tls-intra-node
+	- containerPort: 7199
+	  name: jmx
+	- containerPort: 9642
+	  name: cql
+	volumeMounts:
+	  - mountPath: /var/lib/cassandra
+	    name: cassandra-data
+      volumes:
+      - name: cassandra-data
+	emptyDir: {}
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  containers:
+  - name: elasticsearch
+    image: elasticsearch:2.3.5
+    ports:
+    - containerPort: 9200
+      name: http
+    - containerPort: 9300
+      name: http2
+    volumeMounts:
+      - mountPath: /usr/share/elasticsearch/data
+        name: elasticsearch-data
+  volumes:
+  - name: elasticsearch-data
+    emptyDir: {}
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gaffer
+  labels:
+    app: gaffer
+spec:
+  containers:
+  - name: gaffer
+    image: cybermaggedon/gaffer:0.3.9
+    ports:
+    - containerPort: 8080
+    volumeMounts:
+      - mountPath: /data
+        name: gaffer-data
+  volumes:
+  - name: gaffer-data
+    emptyDir: {}
