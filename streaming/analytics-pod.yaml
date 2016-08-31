@@ -3,14 +3,56 @@ kind: Service
 metadata:
   name: analytics
   labels:
-    run: analytics
+    app: analytics
 spec:
   ports:
   - port: 7070
     targetPort: 8080
     protocol: TCP
   selector:
-    run: analytics
+    app: analytics
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  labels:
+    app: cassandra
+spec:
+  ports:
+  - port: 9642
+    targetPort: 9642
+    protocol: TCP
+  selector:
+    app: cassandra
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  ports:
+  - port: 9200
+    targetPort: 9200
+    protocol: TCP
+  selector:
+    app: elasticsearch
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: gaffer
+  labels:
+    app: gaffer
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: gaffer
 ----
 apiVersion: v1
 kind: Pod
@@ -42,7 +84,7 @@ spec:
     - name: CASSANDRA_KEYSPACE
       value: rdf
     - name: CASSANDRA_CONTACTS
-      value: '["10.142.0.6"]'
+      value: '["cassandra"]'
     - name: CYBERMON_BINDING
       value: tcp://10.142.0.2:5555
     - name: ELASTICSEARCH_INDEX
@@ -52,9 +94,22 @@ spec:
     - name: ELASTICSEARCH_URL
       value: http://elasticsearch:9200
     - name: GAFFER_URL
-      value: http://10.142.0.3:8080/example-rest/v1
+      value: http://gaffer:8080/example-rest/v1
     ports:
     - containerPort: 8080
+  volumes:
+  - name: keys
+    secret:
+      secretName: keys
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cassandra
+  labels:
+    app: cassandra
+spec:
+  containers:
   - name: cassandra
     image: cassandra:3.7
     ports:
@@ -68,7 +123,19 @@ spec:
       name: cql
     volumeMounts:
       - mountPath: /var/lib/cassandra
-        name: cassandra_data
+        name: cassandra-data
+  volumes:
+  - name: cassandra-data
+    emptyDir: {}
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  containers:
   - name: elasticsearch
     image: elasticsearch:2.3.5
     ports:
@@ -78,21 +145,26 @@ spec:
       name: http2
     volumeMounts:
       - mountPath: /usr/share/elasticsearch/data
-        name: elasticsearch_data
+        name: elasticsearch-data
+  volumes:
+  - name: elasticsearch-data
+    emptyDir: {}
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gaffer
+  labels:
+    app: gaffer
+spec:
+  containers:
   - name: gaffer
     image: cybermaggdon/gaffer:0.3.9
     ports:
     - containerPort: 8080
     volumeMounts:
       - mountPath: /data
-        name: gaffer_data
+        name: gaffer-data
   volumes:
-  - name: keys
-    secret:
-      secretName: keys
-  - name: cassandra_data
-    emptyDir: {}
-  - name: elasticsearch_data
-    emptyDir: {}
-  - name: gaffer_data
+  - name: gaffer-data
     emptyDir: {}
