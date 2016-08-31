@@ -223,8 +223,9 @@ def output(obs):
                      data=json.dumps(edges),
                      headers={"Content-Type": "application/json"})
     if r.status_code != 204:
-        print "Error sending to " +  gaffer + "/graph/doOperation/add/elements"
-        print "HTTP code: " + str(r.status_code)
+        sys.stderr.write("Error sending to %s/graph/doOperation/add/elements\n" %
+                         gaffer)
+        sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
 
 ############################################################################
 

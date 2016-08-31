@@ -85,7 +85,7 @@ spec:
           name: tls-intra-node
         - containerPort: 7199
           name: jmx
-        - containerPort: 9642
+        - containerPort: 9042
           name: cql
         volumeMounts:
           - mountPath: /var/lib/cassandra

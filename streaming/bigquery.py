@@ -76,7 +76,6 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(private,
 
 if project == None:
     project = json.loads(open(private,'r').read())['project_id']
-    print project
 
 http = Http()
 http_auth = credentials.authorize(http)
@@ -97,7 +96,7 @@ except googleapiclient.errors.HttpError:
     found=False
 
 if found:
-    print "Table %s exists." % table
+    sys.stderr.write("Table %s exists.\n" % table)
 else:
 
     body = {
@@ -376,10 +375,10 @@ else:
     try: 
         table_info = tables.insert(projectId=project, datasetId=dataset,
                                    body=body).execute(http)
-        print "Table %s created." % table
+        sys.stderr.write("Table %s created.\n" % table)
     except googleapiclient.errors.HttpError, e:
-        print "Table creation failed."
-        print e
+        sys.stderr.write("Table creation failed.\n")
+        sys.stderr.write("%s\n" % str(e))
         sys.exit(0)
 
 ############################################################################
@@ -403,11 +402,11 @@ def output(obs, id):
                                      tableId=table, body=body).\
                                      execute(http)
         if result.has_key("insertErrors"):
-            print json.dumps(obs)
-            print json.dumps(result)
+            sys.stderr.write("%s\n" % json.dumps(obs))
+            sys.stderr.write("%s\n" % json.dumps(result))
     except googleapiclient.errors.HttpError, e:
-        print "Table insert failed."
-        print e
+        sys.stderr.write("Table insert failed.\n")
+        sys.stderr.write("%s\n" % str(e))
 
     return
 
@@ -420,8 +419,8 @@ def output(obs, id):
     r = requests.put(u, data=json.dumps(obs),
                      headers={"Content-Type": "application/json"})
     if r.status_code != 201:
-        print "Error sending to ElasticSearch"
-        print "HTTP code: " + str(r.status_code)
+        sys.stderr.write("Error sending to ElasticSearch\n")
+        sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
 
 ############################################################################
 

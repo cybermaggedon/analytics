@@ -48,9 +48,9 @@ def output(obs, id):
 
     r = requests.put(u, data=json.dumps(obs),
                      headers={"Content-Type": "application/json"})
-    if r.status_code != 201:
-        print "Error sending to ElasticSearch"
-        print "HTTP code: " + str(r.status_code)
+    if r.status_code != 201 and r.status_code != 200:
+        sys.stderr.write("Error sending to ElasticSearch\n")
+        sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
 
 ############################################################################
 
