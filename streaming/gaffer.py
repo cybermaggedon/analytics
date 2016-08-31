@@ -13,6 +13,8 @@ import time
 
 ############################################################################
 
+sys.stderr = open("gaffer.err","w")
+
 fqdn = socket.getfqdn()
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.PULL)
@@ -24,6 +26,8 @@ print "INIT"
 print "INPUT:input:%s" % input
 print "RUNNING"
 sys.stdout.flush()
+
+sys.stdout = open("gaffer.err","w")
 
 ############################################################################
 
@@ -219,13 +223,21 @@ def output(obs):
 
         edges["elements"].append(elt)
 
-    r = requests.put(gaffer + "/graph/doOperation/add/elements",
-                     data=json.dumps(edges),
-                     headers={"Content-Type": "application/json"})
-    if r.status_code != 204:
-        sys.stderr.write("Error sending to %s/graph/doOperation/add/elements\n" %
-                         gaffer)
-        sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+    while True:
+        try:
+            r = requests.put(gaffer + "/graph/doOperation/add/elements",
+                             data=json.dumps(edges),
+                             headers={"Content-Type": "application/json"})
+            if r.status_code != 204:
+                sys.stderr.write("Error sending to %s/graph/doOperation/add/elements\n" %
+                                 gaffer)
+                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+            break
+        except e:
+            # Keep retrying for transport errors
+            sys.stderr.write("Could not deliver to Gaffer...\n")
+            continue
+        
 
 ############################################################################
 
