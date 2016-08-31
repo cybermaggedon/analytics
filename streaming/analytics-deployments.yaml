@@ -12,6 +12,13 @@ spec:
       containers:
       - name: analytics
         image: gcr.io/trust-networks/analytics:mvp2a
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.5"
+          limits:
+            memory: "512M"
+            cpu: "1.0"
         volumeMounts:
         - mountPath: /wye/key
           name: keys
@@ -64,6 +71,13 @@ spec:
       containers:
       - name: cassandra
         image: cassandra:3.7
+        resources:
+          requests:
+            memory: "2048M"
+            cpu: "1.0"
+          limits:
+            memory: "4096M"
+            cpu: "2.0"
         ports:
         - containerPort: 7000
           name: intra-node
@@ -96,6 +110,13 @@ spec:
       containers:
       - name: elasticsearch
         image: elasticsearch:2.3.5
+        resources:
+          requests:
+            memory: "2048M"
+            cpu: "1.0"
+          limits:
+            memory: "4096M"
+            cpu: "1.0"
         ports:
         - containerPort: 9200
           name: http
@@ -124,6 +145,13 @@ spec:
       containers:
       - name: gaffer
         image: cybermaggedon/gaffer:0.3.9
+        resources:
+          requests:
+            memory: "2048M"
+            cpu: "1.0"
+          limits:
+            memory: "8192M"
+            cpu: "1.0"
         ports:
         - containerPort: 8080
         volumeMounts:
