@@ -27,7 +27,7 @@ sys.stdout.flush()
 
 ############################################################################
 
-gaffer = os.getenv("GAFFER_URL", "http://localhost:8080/example-rest/v1")
+gaffer = os.getenv("GAFFER_URL", "http://gaffer:8080/example-rest/v1")
 
 ############################################################################
 

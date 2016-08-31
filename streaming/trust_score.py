@@ -23,7 +23,7 @@ trust_time = 86400
 private = os.getenv("KEY", "private.json")
 project = os.getenv("BIGQUERY_PROJECT", None)
 dataset = os.getenv("BIGQUERY_DATASET","cyberprobe")
-table = os.getenv("TRUST_TABLE","fingerprint2")
+table = os.getenv("TRUST_TABLE","fingerprint")
 
 ############################################################################
 

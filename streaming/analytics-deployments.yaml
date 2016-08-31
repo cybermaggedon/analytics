@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: analytics
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: analytics
+    spec:	
+      containers:
+      - name: analytics
+        image: gcr.io/trust-networks/analytics:mvp2a
+	volumeMounts:
+	- name: keys
+	  mountPath: /wye/key
+	  readOnly: True
+	env:
+	- name: KEY
+	  value: /wye/key/private.json
+	- name: BIGQUERY_PROJECT
+	  value: trust-networks
+	- name: BIGQUERY_DATASET
+	  value: test
+	- name: RAW_TABLE
+	  value: cyberprobe
+	- name: ACTIVITY_TABLE
+	  value: activity
+	- name: TRUST_TABLE
+	  value: fingerprint
+	- name: CASSANDRA_KEYSPACE
+	  value: rdf
+	- name: CASSANDRA_CONTACTS
+	  value: '["cassandra"]'
+	- name: CYBERMON_BINDING
+	  value: tcp://10.142.0.2:5555
+	- name: ELASTICSEARCH_INDEX
+	  value: cyberprobe
+	- name: ELASTICSEARCH_OBJECT
+	  value: observation
+	- name: ELASTICSEARCH_URL
+	  value: http://elasticsearch:9200
+	- name: GAFFER_URL
+	  value: http://gaffer:8080/example-rest/v1
+	ports:
+	- containerPort: 8080
+      volumes:
+      - name: keys
+	secret:
+	  secretName: keys

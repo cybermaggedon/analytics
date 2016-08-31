@@ -22,7 +22,7 @@ curation_time = 5
 private = os.getenv("KEY", "private.json")
 project = os.getenv("BIGQUERY_PROJECT", None)
 dataset = os.getenv("BIGQUERY_DATASET", "cyberprobe")
-table = os.getenv("ACTIVITY_TABLE", "activity2")
+table = os.getenv("ACTIVITY_TABLE", "activity")
 
 ############################################################################
 

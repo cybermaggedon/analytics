@@ -64,7 +64,7 @@ sys.stdout.flush()
 private = os.getenv("KEY", "private.json")
 project = os.getenv("BIGQUERY_PROJECT", None)
 dataset = os.getenv("BIGQUERY_DATASET", "cyberprobe")
-table = os.getenv("RAW_TABLE", "cyberprobe2")
+table = os.getenv("RAW_TABLE", "cyberprobe")
 
 ############################################################################
 

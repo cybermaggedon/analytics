@@ -28,7 +28,7 @@ es_index = os.getenv("ELASTICSEARCH_INDEX", "cyberprobe")
 es_object = os.getenv("ELASTICSEARCH_OBJECT", "observation")
 
 if len(sys.argv) < 2:
-    es_url = os.getenv("ELASTICSEARCH_URL", "http://localhost:9200")
+    es_url = os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200")
 else:
     es_url = sys.argv[1]
 

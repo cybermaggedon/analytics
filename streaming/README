@@ -4,36 +4,35 @@ gcloud init
 gcloud config set compute/zone us-east1-d
 
 # Create single node cluster
-gcloud container --project "trust-networks" clusters create \
-  "wye-cluster" \
-  --zone "us-east1-d" --machine-type "n1-standard-1" \
-  --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly" \
-  --num-nodes "1" --network "default" --enable-cloud-logging \
-  --enable-cloud-monitoring
+#gcloud container --project "trust-networks" clusters create \
+#  "wye-cluster" \
+#  --zone "us-east1-d" --machine-type "n1-standard-1" \
+#  --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly" \
+#  --num-nodes "1" --network "default" --enable-cloud-logging \
+#  --enable-cloud-monitoring
 
-gcloud container clusters get-credentials wye-cluster \
-  --zone us-east1-d --project trust-networks
+# 3 node cluster
+gcloud container --project "trust-networks" clusters create "analytics" \
+  --zone "us-central1-a" --machine-type "n1-standard-2" \
+  --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly" \
+  --num-nodes "3" --network "default" --enable-cloud-logging \
+  --enable-cloud-monitoring
+  
+# 25 GB disk for Cassandra
+gcloud compute --project "trust-networks" disks create "cassandra-0000" --size "25" --zone "us-central1-a" --type "pd-standard"
+
+# 25 GB disk for ES
+gcloud compute --project "trust-networks" disks create "elasticsearch-0000" --size "25" --zone "us-central1-a" --type "pd-standard"
+
+# 25 GB disk for Gaffer
+gcloud compute --project "trust-networks" disks create "gaffer-0000" --size "25" --zone "us-central1-a" --type "pd-standard"
+
+gcloud container clusters get-credentials analytics \
+  --zone us-central1-a --project trust-networks
 
 kubectl create secret generic keys --from-file=private.json
+kubectl create -f analytics-services.yaml
 
 kubectl create -f analytics-pod.yaml
-
-Environment:
-	BIGQUERY_PROJECT
-	BIGQUERY_DATASET
-	RAW_TABLE
-	ACTIVITY_TABLE
-	TRUST_TABLE
-	
-	CASSANDRA_KEYSPACE
-	CASSANDRA_CONTACTS
-	CYBERMON_BINDING
-
-	ELASTICSEARCH_INDEX
-	ELASTICSEARCH_OBJECT
-	ELASTICSEARCH_URL
-
-	GAFFER_URL
-
 
 #kubectl export deployment analytics-pod --target-port=8080 --type=Load

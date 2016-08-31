@@ -29,7 +29,7 @@ sys.stdout.flush()
 ############################################################################
 
 keyspace = os.getenv("CASSANDRA_KEYSPACE", "rdf")
-contacts = json.loads(os.getenv("CASSANDRA_CONTACTS","[\"127.0.0.1\"]"))
+contacts = json.loads(os.getenv("CASSANDRA_CONTACTS","[\"cassandra\"]"))
 
 ############################################################################
 
