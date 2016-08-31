@@ -159,7 +159,7 @@ metadata:
 spec:
   containers:
   - name: gaffer
-    image: cybermaggdon/gaffer:0.3.9
+    image: cybermaggedon/gaffer:0.3.9
     ports:
     - containerPort: 8080
     volumeMounts:
