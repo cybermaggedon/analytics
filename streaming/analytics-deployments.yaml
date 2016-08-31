@@ -66,7 +66,7 @@ spec:
   template:
     metadata:
       labels:
-        app: analytics
+        app: cassandra
     spec:
       containers:
       - name: cassandra
@@ -98,14 +98,12 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: elasticsearch
-  labels:
-    app: elasticsearch
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: analytics
+        app: elasticsearch
     spec:
       containers:
       - name: elasticsearch
@@ -133,14 +131,12 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: gaffer
-  labels:
-    app: gaffer
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: analytics
+        app: gaffer
     spec:
       containers:
       - name: gaffer
@@ -150,7 +146,7 @@ spec:
             memory: "2048M"
             cpu: "1.0"
           limits:
-            memory: "8192M"
+            memory: "6144M"
             cpu: "1.0"
         ports:
         - containerPort: 8080

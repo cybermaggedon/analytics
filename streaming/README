@@ -33,6 +33,6 @@ gcloud container clusters get-credentials analytics \
 kubectl create secret generic keys --from-file=private.json
 kubectl create -f analytics-services.yaml
 
-kubectl create -f analytics-pod.yaml
+kubectl create -f analytics-deployments.yaml
 
 #kubectl export deployment analytics-pod --target-port=8080 --type=Load
