@@ -92,7 +92,9 @@ spec:
             name: cassandra-data
       volumes:
       - name: cassandra-data
-        emptyDir: {}
+        gcePersistentDisk:
+          pdName: cassandra-0000
+          fsType: ext4
 ----
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -125,7 +127,9 @@ spec:
             name: elasticsearch-data
       volumes:
       - name: elasticsearch-data
-        emptyDir: {}
+        gcePersistentDisk:
+          pdName: elasticsearch-0000
+          fsType: ext4
 ----
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -155,4 +159,6 @@ spec:
             name: gaffer-data
       volumes:
       - name: gaffer-data
-        emptyDir: {}
+        gcePersistentDisk:
+          pdName: gaffer-0000
+          fsType: ext4
