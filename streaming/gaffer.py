@@ -221,9 +221,15 @@ def output(obs):
 
     while True:
         try:
+            sys.stderr.write("Gaffer delivery...\n")
+
             r = requests.put(gaffer + "/graph/doOperation/add/elements",
                              data=json.dumps(edges),
                              headers={"Content-Type": "application/json"})
+
+            # Ignore a valid HTTP response.  Errors are probably bugs in my
+            # code.
+            sys.stderr.write("Delivered.\n")
             if r.status_code != 204:
                 sys.stderr.write("Error sending to %s/graph/doOperation/add/elements\n" %
                                  gaffer)
@@ -232,6 +238,7 @@ def output(obs):
         except e:
             # Keep retrying for transport errors
             sys.stderr.write("Could not deliver to Gaffer...\n")
+            time.sleep(1)
             continue
         
 
