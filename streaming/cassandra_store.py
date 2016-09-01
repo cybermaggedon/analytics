@@ -376,10 +376,10 @@ def handle(msg):
 
 ############################################################################
 
-cluster = Cluster(contacts)
 
 while True:
     try:
+        cluster = Cluster(contacts)
         session = cluster.connect()
         break
     except:
