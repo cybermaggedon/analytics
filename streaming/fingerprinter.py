@@ -49,11 +49,12 @@ trust_time = 86400
 
 ############################################################################
 
+sockets = wye.parse_outputs(sys.argv[1:])
+
 fqdn = socket.getfqdn()
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.PULL)
 port = skt.bind_to_random_port("tcp://*")
-
 input="tcp://%s:%d" % (fqdn, port)
 
 print "INIT"

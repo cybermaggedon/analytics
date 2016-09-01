@@ -31,6 +31,7 @@ gcloud container clusters get-credentials analytics \
   --zone us-central1-a --project trust-networks
 
 kubectl create secret generic keys --from-file=private.json
+
 kubectl create -f analytics-services.yaml
 
 kubectl create -f analytics-deployments.yaml
