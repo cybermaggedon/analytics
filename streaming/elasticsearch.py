@@ -44,7 +44,7 @@ def output(obs, id):
         es_object: obs
         }
 
-    u = "%s%s/%s/%s?ttl=%s" % (es_url, es_index, es_object, id, ttl)
+    u = "%s/%s/%s/%s?ttl=%s" % (es_url, es_index, es_object, id, ttl)
 
     while True:
         try: 
@@ -54,8 +54,9 @@ def output(obs, id):
                 sys.stderr.write("Error sending to ElasticSearch\n")
                 sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
             break
-        except:
-            time.sleep(0.1)
+        except Exception, e:
+            sys.stderr.write("Exception: %s\n" % str(e))
+            time.sleep(1)
 
 ############################################################################
 
@@ -138,6 +139,7 @@ while True:
     try:
         msg = skt.recv()
         handle(json.loads(msg))
-    except:
+    except Exception, e:
+        sys.stderr.write("elasticsearch: Exception: %s\n" % str(e))
         time.sleep(0.1)
 

@@ -49,7 +49,6 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(private,
 
 if project == None:
     project = json.loads(open(private,'r').read())['project_id']
-    print project
 
 http = Http()
 http_auth = credentials.authorize(http)
@@ -71,7 +70,7 @@ except googleapiclient.errors.HttpError:
     found=False
 
 if found:
-    print "Table %s exists." % table
+    sys.stderr.write("trust_score: Table %s exists.\n" % table)
 else:
 
     body = {
@@ -121,10 +120,10 @@ else:
     try: 
         table_info = tables.insert(projectId=project, datasetId=dataset,
                                    body=body).execute(http)
-        print "Table %s created." % table
+        sys.stderr.write("trust_score: Table %s created.\n" % table)
     except googleapiclient.errors.HttpError, e:
-        print "Table creation failed."
-        print e
+        sys.stderr.write("trust_score: Table creation failed.\n")
+        sys.stderr.write("trust_score: %s\n" % str(e))
         sys.exit(0)
 
 ############################################################################
@@ -285,11 +284,11 @@ def handle(msg):
                                      tableId=table, body=body).\
                                      execute(http)
         if result.has_key("insertErrors"):
-            print json.dumps(obs)
-            print json.dumps(result)
+            sys.stderr.write("trust_score: %s\n" % json.dumps(obs))
+            sys.stderr.write("trust_score: %s\n" % json.dumps(result))
     except googleapiclient.errors.HttpError, e:
-        print "Table insert failed."
-        print e
+        sys.stderr.write("trust_score: Table insert failed.\n")
+        sys.stderr.write("trust_score: %s\n" % str(e))
     except:
         pass
 
@@ -299,6 +298,7 @@ while True:
     try:
         msg = skt.recv()
         handle(json.loads(msg))
-    except:
-        time.sleep(0.1)
+    except Exception, e:
+        sys.stderr.write("trust_score: Exception: %s\n" % str(e))
+        time.sleep(1)
 

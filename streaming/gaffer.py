@@ -232,9 +232,10 @@ def output(obs):
                                  gaffer)
                 sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
             break
-        except e:
+        except Exception, e:
             # Keep retrying for transport errors
-            sys.stderr.write("Could not deliver to Gaffer...\n")
+            sys.stderr.write("gaffer: Could not deliver to Gaffer...\n")
+            sys.stderr.write("gaffer: Exception: %s\n" % str(e))
             time.sleep(1)
 
 ############################################################################
@@ -425,7 +426,8 @@ while True:
     try:
         msg = skt.recv()
         handle(json.loads(msg))
-    except:
-        time.sleep(0.1)
+    except Exception, e:
+        sys.stderr.write("gaffer: Exception: %s\n" % str(e))
+        time.sleep(1)
 
 

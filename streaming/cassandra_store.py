@@ -189,8 +189,9 @@ def output(obs):
                     o[0], o[1], o[2], o[0], o[1], o[2], o[0], o[1], o[2]
                 ])
                 break
-            except:
-                time.sleep(0.1)
+            except Exception, e:
+                sys.stderr.write("Exception: %s\n" % str(e))
+                time.sleep(1)
                 continue
                 
 ############################################################################
@@ -432,8 +433,9 @@ while True:
     try:
         msg = skt.recv()
         handle(json.loads(msg))
-    except:
-        time.sleep(0.1)
+    except Exception, e:
+        sys.stderr.write("cassandra_store: Exception: %s\n" % str(e))
+        time.sleep(1)
 
 
 

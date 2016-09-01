@@ -114,6 +114,7 @@ while True:
     try:
         msg = skt.recv()
         handle(json.loads(msg))
-    except:
-        time.sleep(0.1)
+    except Exception, e:
+        sys.stderr.write("fingerprinter: Exception: %s\n" % str(e))
+        time.sleep(1)
 

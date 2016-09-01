@@ -375,10 +375,10 @@ else:
     try: 
         table_info = tables.insert(projectId=project, datasetId=dataset,
                                    body=body).execute(http)
-        sys.stderr.write("Table %s created.\n" % table)
+        sys.stderr.write("bigquery: Table %s created.\n" % table)
     except googleapiclient.errors.HttpError, e:
-        sys.stderr.write("Table creation failed.\n")
-        sys.stderr.write("%s\n" % str(e))
+        sys.stderr.write("bigquery: Table creation failed.\n")
+        sys.stderr.write("bigquery: %s\n" % str(e))
         sys.exit(0)
 
 ############################################################################
@@ -402,11 +402,11 @@ def output(obs, id):
                                      tableId=table, body=body).\
                                      execute(http)
         if result.has_key("insertErrors"):
-            sys.stderr.write("%s\n" % json.dumps(obs))
-            sys.stderr.write("%s\n" % json.dumps(result))
+            sys.stderr.write("bigquery: %s\n" % json.dumps(obs))
+            sys.stderr.write("bigquery: %s\n" % json.dumps(result))
     except googleapiclient.errors.HttpError, e:
-        sys.stderr.write("Table insert failed.\n")
-        sys.stderr.write("%s\n" % str(e))
+        sys.stderr.write("bigquery: Table insert failed.\n")
+        sys.stderr.write("bigquery: %s\n" % str(e))
 
     return
 
@@ -419,8 +419,8 @@ def output(obs, id):
     r = requests.put(u, data=json.dumps(obs),
                      headers={"Content-Type": "application/json"})
     if r.status_code != 201:
-        sys.stderr.write("Error sending to ElasticSearch\n")
-        sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+        sys.stderr.write("bigquery: Error sending to ElasticSearch\n")
+        sys.stderr.write("bigquery: HTTP code: " + str(r.status_code) + "\n")
 
 ############################################################################
 
@@ -510,8 +510,9 @@ while True:
     try:
         msg = skt.recv()
         handle(json.loads(msg))
-    except:
-        time.sleep(0.1)
+    except Exception, e:
+        sys.stderr.write("bigquery: Exception: %s\n" % str(e))
+        time.sleep(1)
 
 
 
