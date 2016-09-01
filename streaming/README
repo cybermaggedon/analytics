@@ -36,3 +36,12 @@ kubectl create -f analytics-services.yaml
 kubectl create -f analytics-deployments.yaml
 
 #kubectl export deployment analytics-pod --target-port=8080 --type=Load
+
+
+
+# Tidy up
+
+kubectl delete -f analytics-services.yaml
+kubectl delete -f analytics-deployments.yaml
+
+gcloud compute --project "trust-networks" disks delete --zone "us-central1-a"  gaffer-0000  elasticsearch-0000 cassandra-0000

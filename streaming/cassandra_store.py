@@ -183,10 +183,16 @@ def init():
 def output(obs):
 
     for o in obs:
-        session.execute(insert_stmt, [
-            o[0], o[1], o[2], o[0], o[1], o[2], o[0], o[1], o[2]
-        ])
-    
+        while True:
+            try:
+                session.execute(insert_stmt, [
+                    o[0], o[1], o[2], o[0], o[1], o[2], o[0], o[1], o[2]
+                ])
+                break
+            except:
+                time.sleep(0.1)
+                continue
+                
 ############################################################################
 
 def handle(msg):

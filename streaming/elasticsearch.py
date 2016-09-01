@@ -46,11 +46,16 @@ def output(obs, id):
 
     u = "%s%s/%s/%s?ttl=%s" % (es_url, es_index, es_object, id, ttl)
 
-    r = requests.put(u, data=json.dumps(obs),
-                     headers={"Content-Type": "application/json"})
-    if r.status_code != 201 and r.status_code != 200:
-        sys.stderr.write("Error sending to ElasticSearch\n")
-        sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+    while True:
+        try: 
+            r = requests.put(u, data=json.dumps(obs),
+                             headers={"Content-Type": "application/json"})
+            if r.status_code != 201 and r.status_code != 200:
+                sys.stderr.write("Error sending to ElasticSearch\n")
+                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+            break
+        except:
+            time.sleep(0.1)
 
 ############################################################################
 

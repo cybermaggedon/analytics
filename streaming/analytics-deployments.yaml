@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:mvp2a
+        image: gcr.io/trust-networks/analytics:mvp2c
         resources:
           requests:
             memory: "64M"
