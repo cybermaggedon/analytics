@@ -29,7 +29,7 @@ spec:
         - name: BIGQUERY_PROJECT
           value: trust-networks
         - name: BIGQUERY_DATASET
-          value: test
+          value: cyberprobe
         - name: RAW_TABLE
           value: cyberprobe
         - name: ACTIVITY_TABLE
@@ -186,3 +186,30 @@ spec:
             cpu: "0.5"
         ports:
         - containerPort: 9000
+----
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kibana
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: kibana:4.5.4
+        resources:
+          requests:
+            memory: "1024M"
+            cpu: "0.2"
+          limits:
+            memory: "1024M"
+            cpu: "0.5"
+        env:
+        - name: ELASTICSEARCH_URL
+          value: http://elasticsearch:9200
+        ports:
+        - containerPort: 5601

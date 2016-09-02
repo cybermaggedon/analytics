@@ -68,3 +68,18 @@ spec:
   selector:
     app: cybermon
   type: LoadBalancer
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  ports:
+  - port: 5601
+    targetPort: 5601
+    protocol: TCP
+  selector:
+    app: kibana
+  type: LoadBalancer
