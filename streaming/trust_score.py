@@ -267,7 +267,7 @@ def handle(msg):
         "host": host,
         "time": msg["time"],
         "fingerprint": fingerprint,
-        "trust": trust[device][host]
+        "trust": trust[tkey]
     }
     
     body = {
