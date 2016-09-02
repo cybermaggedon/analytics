@@ -162,3 +162,27 @@ spec:
         gcePersistentDisk:
           pdName: gaffer-0000
           fsType: ext4
+----
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cybermon
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cybermon
+    spec:
+      containers:
+      - name: cybermon
+        image: cybermaggedon/cybermon:0.73
+        resources:
+          requests:
+            memory: "1024M"
+            cpu: "0.1"
+          limits:
+            memory: "1024M"
+            cpu: "0.5"
+        ports:
+        - containerPort: 9000

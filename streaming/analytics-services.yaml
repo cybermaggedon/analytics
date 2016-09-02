@@ -53,3 +53,18 @@ spec:
     protocol: TCP
   selector:
     app: gaffer
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: cybermon
+  labels:
+    app: cybermon
+spec:
+  ports:
+  - port: 9000
+    targetPort: 9000
+    protocol: TCP
+  selector:
+    app: cybermon
+  type: LoadBalancer
