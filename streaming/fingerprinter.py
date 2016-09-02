@@ -104,7 +104,7 @@ def handle(msg):
     fingerprint = md5.new(json.dumps(fingerprint)).hexdigest()
 
     msg = { "id": id, "device": device, "protocol": "http", "time": time,
-            "fingerprint": fingerprint }
+            "fingerprint": fingerprint, "host": host }
     msg = json.dumps(msg)
 
     for s in sockets["output"]:
