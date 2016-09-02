@@ -195,7 +195,7 @@ for row in rows:
     host = row[2]["v"]
     tm = float(row[3]["v"])
     fingerprint = row[4]["v"]
-    tr = row[5]["v"]
+    tr = float(row[5]["v"])
 
     fkey = (device, protocol, host, fingerprint)
 
