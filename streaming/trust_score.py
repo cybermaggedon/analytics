@@ -258,7 +258,7 @@ def handle(msg):
 
     # New trust score is average of current trust score, and the score we
     # just worked out.
-    trust[tkey] = (tkey + score) / 2
+    trust[tkey] = (trust[tkey] + score) / 2
 
     # Store in BigQuery
     obj = {
