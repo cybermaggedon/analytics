@@ -248,3 +248,27 @@ spec:
             cpu: "0.5"
         ports:
         - containerPort: 8081
+----
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: gcr.io/trust-networks/web:mvp2l
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.1"
+          limits:
+            memory: "256M"
+            cpu: "0.5"
+        ports:
+        - containerPort: 80
