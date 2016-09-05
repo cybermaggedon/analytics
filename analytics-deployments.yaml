@@ -206,10 +206,39 @@ spec:
             memory: "1024M"
             cpu: "0.2"
           limits:
-            memory: "1024M"
+            memory: "2048M"
             cpu: "0.5"
         env:
         - name: ELASTICSEARCH_URL
           value: http://elasticsearch:9200
         ports:
         - containerPort: 5601
+----
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sparql
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sparql
+    spec:
+      containers:
+      - name: sparql
+        image: cybermaggedon/sparql-cassandra:0.01
+        command:
+        - "sparql"
+        - "8081"
+        - "cassandra"
+        - "cassandra"
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.1"
+          limits:
+            memory: "256M"
+            cpu: "0.5"
+        ports:
+        - containerPort: 8081

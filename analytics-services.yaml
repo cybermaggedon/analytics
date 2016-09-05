@@ -83,3 +83,18 @@ spec:
   selector:
     app: kibana
   type: LoadBalancer
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: sparql
+  labels:
+    app: sparql
+spec:
+  ports:
+  - port: 5601
+    targetPort: 5601
+    protocol: TCP
+  selector:
+    app: sparql
+  type: LoadBalancer
