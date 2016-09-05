@@ -11,7 +11,13 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:mvp2k
+        image: gcr.io/trust-networks/analytics:mvp2l
+        livenessProbe:
+          exec:
+            command:
+            - wye-get-health
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
         resources:
           requests:
             memory: "64M"
