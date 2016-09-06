@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:mvp2l
+        image: gcr.io/trust-networks/analytics:mvp2m
         livenessProbe:
           exec:
             command:
@@ -46,7 +46,7 @@ spec:
           value: rdf
         - name: CASSANDRA_CONTACTS
           value: '["cassandra"]'
-        - name: CYBERMON_BINDING
+        - name: ZMQ_BINDING
           value: tcp://10.142.0.2:5555
         - name: ELASTICSEARCH_INDEX
           value: cyberprobe
@@ -58,6 +58,9 @@ spec:
           value: http://gaffer:8080/example-rest/v1
         ports:
         - containerPort: 8080
+          name: management
+        - containerPort: 5555
+          name: input
       volumes:
       - name: keys
         secret:
@@ -182,7 +185,7 @@ spec:
     spec:
       containers:
       - name: cybermon
-        image: cybermaggedon/cybermon:0.73
+        image: cybermaggedon/cybermon:0.75
         resources:
           requests:
             memory: "1024M"
@@ -190,6 +193,9 @@ spec:
           limits:
             memory: "1024M"
             cpu: "0.5"
+        env:
+        - name: ZMQ_CONNECT
+          value: tcp://analytics:5555
         ports:
         - containerPort: 9000
 ----

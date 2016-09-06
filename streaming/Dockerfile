@@ -2,7 +2,8 @@ FROM cybermaggedon/wye:0.03
 ENV BINDING=tcp://localhost:5555
 COPY bigquery.py /wye/
 COPY cassandra_store.py /wye/
-COPY cybermon_subscriber.py /wye/
+COPY zmq_subscriber.py /wye/
+COPY zmq_receiver.py /wye/
 COPY dns_activity.py /wye/
 COPY elasticsearch.py /wye/
 COPY fingerprinter.py /wye/

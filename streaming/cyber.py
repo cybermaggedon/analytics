@@ -25,11 +25,17 @@ cassandra = job.define_python_worker("cassandra", "cassandra_store.py")
 fp = job.define_python_worker("fingerprinter", "fingerprinter.py")
 fp.connect("output", [(trust, "input")])
 
-src = job.define_python_worker("subscriber", "cybermon_subscriber.py")
-src.connect("output",
+subs = job.define_python_worker("subscriber", "zmq_subscriber.py")
+subs.connect("output",
             [(webact, "input"), (dnsact, "input"), (fp, "input"),
              (bq, "input"), (es, "input"), (gaffer, "input"),
              (cassandra, "input")])
+
+recv = job.define_python_worker("receiver", "zmq_receiver.py")
+recv.connect("output",
+             [(webact, "input"), (dnsact, "input"), (fp, "input"),
+              (bq, "input"), (es, "input"), (gaffer, "input"),
+              (cassandra, "input")])
 
 job_id = job.implement()
 
