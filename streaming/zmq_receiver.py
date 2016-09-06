@@ -11,6 +11,7 @@ import os
 # ---------------------------------------------------------------------------
 
 print "INIT"
+sockets = wye.parse_outputs(sys.argv[1:])
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.PULL)
 skt.bind("tcp://*:5555")
@@ -29,6 +30,7 @@ while True:
     try:
         msg = skt.recv()
         handle(msg)
-    except:
+    except Exception, e:
+        sys.stderr.write("receiver: exception: %s\n" % (str(e)))
         time.sleep(0.1)
 
