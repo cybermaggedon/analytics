@@ -17,10 +17,11 @@ port = skt.bind_to_random_port("tcp://*")
 
 input="tcp://%s:%d" % (fqdn, port)
 
-print "INIT"
-print "INPUT:input:%s" % input
-print "RUNNING"
-sys.stdout.flush()
+ctrl = os.fdopen(3, 'w')
+ctrl.write("INIT\n")
+ctrl.write("INPUT:input:%s\n" % input)
+ctrl.write("RUNNING\n")
+ctrl.flush()
 
 ############################################################################
     
@@ -141,5 +142,6 @@ while True:
         handle(json.loads(msg))
     except Exception, e:
         sys.stderr.write("elasticsearch: Exception: %s\n" % str(e))
+	sys.stderr.flush()
         time.sleep(0.1)
 

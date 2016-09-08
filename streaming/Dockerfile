@@ -1,4 +1,4 @@
-FROM cybermaggedon/wye:0.03
+FROM cybermaggedon/wye:0.04
 ENV BINDING=tcp://localhost:5555
 COPY bigquery.py /wye/
 COPY cassandra_store.py /wye/

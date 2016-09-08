@@ -10,7 +10,8 @@ import os
 
 # ---------------------------------------------------------------------------
 
-print "INIT"
+ctrl = os.fdopen(3, 'w')
+ctrl.write("INIT\n")
 sockets = wye.parse_outputs(sys.argv[1:])
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.SUB)
@@ -19,8 +20,8 @@ for v in bindings.split(","):
     skt.connect(v)
     sys.stderr.write("Connected to %s\n" % v)
 skt.setsockopt(zmq.SUBSCRIBE, "")
-print "RUNNING"
-sys.stdout.flush()
+ctrl.write("RUNNING\n")
+ctrl.flush()
 
 # ---------------------------------------------------------------------------
 
