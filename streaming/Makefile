@@ -1,5 +1,5 @@
 
-VERSION=mvp2p
+VERSION=mvp2q
 
 container:
 	docker build -t gcr.io/trust-networks/analytics:${VERSION} .

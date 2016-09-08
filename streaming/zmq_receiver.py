@@ -16,7 +16,6 @@ sockets = wye.parse_outputs(sys.argv[1:])
 ctxt = zmq.Context()
 skt = ctxt.socket(zmq.PULL)
 skt.bind("tcp://*:5555")
-ctrl = os.fdopen(3, 'w')
 ctrl.write("RUNNING\n")
 ctrl.flush()
 
