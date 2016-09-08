@@ -28,14 +28,12 @@ fp.connect("output", [(trust, "input")])
 subs = job.define_python_worker("subscriber", "zmq_subscriber.py")
 subs.connect("output",
             [(webact, "input"), (dnsact, "input"), (fp, "input"),
-             (bq, "input"), (es, "input"), (gaffer, "input"),
-             (cassandra, "input")])
+             (bq, "input"), (es, "input"), (cassandra, "input")])
 
 recv = job.define_python_worker("receiver", "zmq_receiver.py")
 recv.connect("output",
              [(webact, "input"), (dnsact, "input"), (fp, "input"),
-              (bq, "input"), (es, "input"), (gaffer, "input"),
-              (cassandra, "input")])
+              (bq, "input"), (es, "input"), (cassandra, "input")])
 
 job_id = job.implement()
 

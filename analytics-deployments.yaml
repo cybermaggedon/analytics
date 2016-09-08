@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:mvp2q
+        image: gcr.io/trust-networks/analytics:mvp2r
         livenessProbe:
           exec:
             command:
@@ -231,7 +231,7 @@ kind: Deployment
 metadata:
   name: sparql
 spec:
-  replicas: 1
+  replicas: 4
   template:
     metadata:
       labels:
@@ -251,7 +251,7 @@ spec:
             cpu: "0.1"
           limits:
             memory: "256M"
-            cpu: "0.5"
+            cpu: "0.2"
         ports:
         - containerPort: 8081
 ----
