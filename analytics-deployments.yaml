@@ -82,10 +82,10 @@ spec:
         image: cassandra:3.7
         resources:
           requests:
-            memory: "2048M"
+            memory: "4096M"
             cpu: "1.0"
           limits:
-            memory: "4096M"
+            memory: "8192M"
             cpu: "2.0"
         ports:
         - containerPort: 7000
@@ -188,11 +188,11 @@ spec:
         image: cybermaggedon/cybermon:0.75
         resources:
           requests:
-            memory: "1024M"
-            cpu: "0.1"
+            memory: "256M"
+            cpu: "0.4"
           limits:
-            memory: "1024M"
-            cpu: "0.5"
+            memory: "512M"
+            cpu: "0.8"
         env:
         - name: ZMQ_CONNECT
           value: tcp://analytics:5555
