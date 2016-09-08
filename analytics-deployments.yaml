@@ -185,7 +185,7 @@ spec:
     spec:
       containers:
       - name: cybermon
-        image: cybermaggedon/cybermon:0.75
+        image: cybermaggedon/cybermon:0.77
         resources:
           requests:
             memory: "256M"
@@ -231,7 +231,7 @@ kind: Deployment
 metadata:
   name: sparql
 spec:
-  replicas: 4
+  replicas: 8
   template:
     metadata:
       labels:
