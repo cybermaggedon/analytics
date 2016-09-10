@@ -2,9 +2,10 @@
 openssl req -config ca.config -new -x509 -sha256 \
 	-newkey rsa:2048 \
 	-nodes -keyout trustnetworks-ca.key.pem -days 365 \
-	-out trustnetworks-ca.cert.pem
+	-out trustnetworks-ca.cert.pem \
+	-extensions v3_ca 
 
-openssl req -config tnw.stanhope.house.conf -new -sha256 -newkey rsa:2048 \
+openssl req -config req.config -new -sha256 -newkey rsa:2048 \
      -nodes -keyout tnw.stanhope.house.key.pem -days 365 \
      -out tnw.stanhope.house.req.pem
 
