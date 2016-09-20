@@ -10,7 +10,10 @@ DD=dd iflag=fullblock
 CA_VALIDITY=710
 CERT_VALIDITY=710
 
-all: CERT.ca CERT.web CERT.mark PKG.mark.p12
+all: CERT.ca ../web/KEY.web ../web/CERT.web ../web/CERT.ca
+
+../web/KEY.web ../web/CERT.web ../web/CERT.ca: ../web/%: %
+	cp $? $@
 
 KEY.ca:
 	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
@@ -33,51 +36,9 @@ REQ.web: KEY.web CONFIG.web
 
 CERT.web: REQ.web CONFIG.web KEY.ca CERT.ca
 	openssl x509 -req -in REQ.web -CAkey KEY.ca \
-	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-	-out CERT.web
+		-CA CERT.ca -CAcreateserial -CAserial SERIAL \
+		-out CERT.web
 	openssl verify -CAfile CERT.ca CERT.web
-
-KEY.mark:
-	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
-	openssl genrsa -out KEY.mark -rand RAND ${KEY_SIZE}
-	rm -f RAND
-
-REQ.mark: KEY.mark
-	openssl req -key KEY.mark -out REQ.mark -days ${CERT_VALIDITY} \
-	-new -config CONFIG.mark
-
-CERT.mark: REQ.mark CONFIG.mark KEY.ca CERT.ca
-	openssl x509 -req -in REQ.mark -CAkey KEY.ca \
-	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-	-out CERT.mark
-	openssl verify -CAfile CERT.ca CERT.mark
-
-PKG.mark.p12: KEY.mark CERT.mark CERT.ca
-	openssl pkcs12 -export -passout pass:${PASSWORD} -inkey KEY.mark \
-	-name mark -in CERT.mark -caname 'Trust Networks' \
-	-certfile CERT.ca -out $@
-	openssl pkcs12 -noout -in PKG.mark.p12 -passin pass:${PASSWORD} -info
-
-create:
-	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
-	openssl genrsa -out KEY.create -rand RAND ${KEY_SIZE}
-	rm -f RAND
-	openssl req -key KEY.create -out REQ.create -days ${CERT_VALIDITY} \
-	-new -config CONFIG.create
-	openssl x509 -req -in REQ.create -CAkey KEY.ca \
-	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-	-out CERT.create
-	openssl verify -CAfile CERT.ca CERT.create
-	openssl pkcs12 -export -passout pass:${PASSWORD} -inkey KEY.create \
-	-name create -in CERT.create -caname 'Trust Networks' \
-	-certfile CERT.ca -out PKG.create.p12
-	openssl pkcs12 -noout -in PKG.create.p12 -passin pass:${PASSWORD} -info
-
-verify:
-	openssl verify -CAfile CERT.ca CERT.ca
-	openssl verify -CAfile CERT.ca CERT.web
-	openssl verify -CAfile CERT.ca CERT.mark
-	openssl pkcs12 -noout -in PKG.mark.p12 -passin pass:${PASSWORD} -info
 
 clean:
 	rm -f KEY.*

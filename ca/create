@@ -1,0 +1,92 @@
+#!/bin/bash
+
+PASSWORD=$(uuidgen)
+
+KEY_SIZE=4096
+RAND_COUNT=1024
+RAND_BLOCK=128
+RANDOM_DEVICE=/dev/random
+DD="dd iflag=fullblock"
+
+CA_VALIDITY=710
+CERT_VALIDITY=710
+
+RAND_FILE=RAND.user$$
+KEY_FILE=KEY.user$$
+CERT_FILE=CERT.user$$
+REQ_FILE=REQ.user$$
+PKG_FILE=PKG.user$$
+
+# Create random data.
+echo '**** Create random data...'
+${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=${RAND_FILE}
+if [ $? -ne 0 ]
+then
+    echo Random creation failed. 1>&2
+    exit 1
+fi
+
+# Create private key.
+echo '**** Generate private key...'
+openssl genrsa -out ${KEY_FILE} -rand ${RAND_FILE} ${KEY_SIZE}
+if [ $? -ne 0 ]
+then
+    echo Private key generation failed. 1>&2
+    exit 1
+fi
+
+# Discard random.
+rm -f ${RAND_FILE}
+
+# Create certificate request.
+echo '**** Generate certificate request...'
+openssl req -key ${KEY_FILE} -out ${REQ_FILE} -days ${CERT_VALIDITY} \
+	-new -config CONFIG.create
+if [ $? -ne 0 ]
+then
+    echo Certificate request creation failed. 1>&2
+    exit 1
+fi
+
+echo '**** Signing request...'
+# Sign certificate request to create certificate.
+openssl x509 -req -in ${REQ_FILE} -CAkey KEY.ca \
+	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
+	-out ${CERT_FILE}
+if [ $? -ne 0 ]
+then
+    echo Certificate signing failed. 1>&2
+    exit 1
+fi
+
+# Delete request.
+rm -f ${REQ_FILE}
+
+# Verify.
+echo '**** Verify certificate...'
+openssl verify -CAfile CERT.ca ${CERT_FILE}
+if [ $? -ne 0 ]
+then
+    echo Certificate verification failed. 1>&2
+    exit 1
+fi
+
+# Create PKCS12 package.
+echo '**** Create key/certificate package...'
+openssl pkcs12 -export -passout pass:${PASSWORD} -inkey ${KEY_FILE} \
+	-in ${CERT_FILE} -caname 'Trust Networks' \
+	-certfile CERT.ca -out ${PKG_FILE}
+if [ $? -ne 0 ]
+then
+    echo Package creation failed. 1>&2
+    exit 1
+fi
+
+# Remove stuff not needed.
+rm -f ${KEY_FILE} ${CERT_FILE}
+
+echo '**** All complete.'
+
+echo PKCS12 package is in ${PKG_FILE}.
+echo Password is ${PASSWORD}.
+

@@ -5,6 +5,7 @@ req_extensions=v3_ca
 
 [dn]
 commonName=Trust Networks CA
+organizationalUnitName=Trust Networks operations
 organizationName=Trust Networks
 emailAddress=operations@trustnetworks.com
 
