@@ -40,8 +40,7 @@ rm -f ${RAND_FILE}
 
 # Create certificate request.
 echo '**** Generate certificate request...'
-openssl req -key ${KEY_FILE} -out ${REQ_FILE} -days ${CERT_VALIDITY} \
-	-new -config CONFIG.create
+openssl req -key ${KEY_FILE} -out ${REQ_FILE} -new -config CONFIG.create
 if [ $? -ne 0 ]
 then
     echo Certificate request creation failed. 1>&2
@@ -52,7 +51,7 @@ echo '**** Signing request...'
 # Sign certificate request to create certificate.
 openssl x509 -req -in ${REQ_FILE} -CAkey KEY.ca \
 	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-	-out ${CERT_FILE}
+	-out ${CERT_FILE} -days ${CERT_VALIDITY}
 if [ $? -ne 0 ]
 then
     echo Certificate signing failed. 1>&2
@@ -83,7 +82,7 @@ then
 fi
 
 # Remove stuff not needed.
-rm -f ${KEY_FILE} ${CERT_FILE}
+#rm -f ${KEY_FILE} ${CERT_FILE}
 
 echo '**** All complete.'
 

@@ -31,13 +31,12 @@ KEY.web:
 	rm -f RAND
 
 REQ.web: KEY.web CONFIG.web
-	openssl req -key KEY.web -out REQ.web -days ${CERT_VALIDITY} \
-	-new -config CONFIG.web
+	openssl req -key KEY.web -out REQ.web -new -config CONFIG.web
 
 CERT.web: REQ.web CONFIG.web KEY.ca CERT.ca
 	openssl x509 -req -in REQ.web -CAkey KEY.ca \
 		-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-		-out CERT.web
+		-out CERT.web -days ${CERT_VALIDITY}
 	openssl verify -CAfile CERT.ca CERT.web
 
 clean:
