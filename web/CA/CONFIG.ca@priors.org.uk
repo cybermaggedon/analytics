@@ -1,0 +1,13 @@
+[req]
+prompt=no
+distinguished_name=dn
+
+[dn]
+CN=Certificate Authority, priors.org.uk
+emailAddress=ca@priors.org.uk
+
+[v3_ca]
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer:always
+basicConstraints=CA:true
+
