@@ -1,5 +1,5 @@
 
-all: CERT.ca CERT.web
+all: CERT.ca CERT.web CERT.mark
 
 KEY.ca:
 	openssl rand -out RAND 16384
@@ -26,9 +26,25 @@ CERT.web: REQ.web
 	-out CERT.web
 	openssl verify -CAfile CERT.ca CERT.web
 
+KEY.mark:
+	openssl rand -out RAND 16384
+	openssl genrsa -out KEY.mark -rand RAND 4096
+	rm -f RAND
+
+REQ.mark: KEY.mark
+	openssl req -key KEY.mark -out REQ.mark -days 710 \
+	-new -config CONFIG.mark
+
+CERT.mark: REQ.mark
+	openssl x509 -req -in REQ.mark -CAkey KEY.ca \
+	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
+	-out CERT.mark
+	openssl verify -CAfile CERT.ca CERT.mark
+
 clean:
-	rm -f KEY.ca CERT.ca
-	rm -f KEY.web REQ.web CERT.web
+	rm -f KEY.*
+	rm -f CERT.*
+	rm -f REQ.*
 	rm -f RAND
 	rm -f SERIAL
 

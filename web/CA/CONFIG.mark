@@ -4,8 +4,7 @@ distinguished_name=dn
 
 [dn]
 CN=Mark Adams
-emailAddress=mark@priors.org.uk
+emailAddress=mark.adams@trustnetworks.com
 
 [exten]
-
 
