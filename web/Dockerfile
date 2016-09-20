@@ -5,4 +5,4 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 COPY CERT.web /etc/nginx/CERT.web
 COPY KEY.web /etc/nginx/KEY.web
 COPY CERT.ca /etc/nginx/CERT.ca
-
+EXPOSE 443
