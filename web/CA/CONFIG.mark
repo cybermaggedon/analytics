@@ -3,8 +3,8 @@ prompt=no
 distinguished_name=dn
 
 [dn]
-CN=Mark Adams
+commonName=Mark Adams
+organizationalUnitName=Users
+organizationName=Trust Networks
 emailAddress=mark.adams@trustnetworks.com
-
-[exten]
 
