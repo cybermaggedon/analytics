@@ -1,0 +1,20 @@
+[req]
+prompt=no
+distinguished_name=dn
+req_extensions=v3_req
+
+[dn]
+commonName=tnw.stanhope.house
+organizationalUnitName=Trust Networks operations
+organizationName=Trust Networks
+emailAddress=operations@trustnetworks.com
+
+[v3_req]
+basicConstraints=CA:false
+keyUsage=nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName=@alt_names
+
+[alt_names]
+DNS.1=tns.stanhope.house
+IP.1=1.2.3.4
+IP.2=127.0.0.1
