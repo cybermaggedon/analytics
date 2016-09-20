@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PASSWORD=$(uuidgen)
+PASSWORD=$(uuidgen | cut -d- -f1)
 
 KEY_SIZE=4096
 RAND_COUNT=1024

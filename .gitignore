@@ -1,1 +1,11 @@
 *~
+ca/CERT.ca
+ca/CERT.web
+ca/KEY.ca
+ca/KEY.web
+ca/REQ.web
+ca/SERIAL
+web/CERT.ca
+web/CERT.web
+web/KEY.web
+

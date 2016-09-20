@@ -1,6 +1,4 @@
 
-PASSWORD=pass
-
 KEY_SIZE=4096
 RAND_COUNT=1024
 RAND_BLOCK=128
@@ -9,6 +7,8 @@ DD=dd iflag=fullblock
 
 CA_VALIDITY=710
 CERT_VALIDITY=710
+
+VERSION=0.01
 
 all: CERT.ca ../web/KEY.web ../web/CERT.web ../web/CERT.ca
 
@@ -47,4 +47,10 @@ clean:
 	rm -f PKG.*
 	rm -f RAND
 	rm -f SERIAL
+
+container: CERT.ca KEY.ca
+	docker build -t gcr.io/trust-networks/ca:${VERSION} .
+
+push:
+	gcloud docker push gcr.io/trust-networks/ca:${VERSION}
 
