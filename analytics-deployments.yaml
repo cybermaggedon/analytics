@@ -268,7 +268,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:mvp2l
+        image: gcr.io/trust-networks/web:0.10
         resources:
           requests:
             memory: "64M"
@@ -277,4 +277,26 @@ spec:
             memory: "256M"
             cpu: "0.5"
         ports:
-        - containerPort: 80
+        - containerPort: 443
+----
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ca
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ca
+    spec:
+      containers:
+      - name: ca
+        image: gcr.io/trust-networks/ca:0.01
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.01"
+          limits:
+            memory: "64M"
+            cpu: "0.01"
