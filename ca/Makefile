@@ -2,7 +2,10 @@
 PASSWORD=pass
 
 KEY_SIZE=4096
-RAND_AMOUNT=16384
+RAND_COUNT=1024
+RAND_BLOCK=128
+RANDOM_DEVICE=/dev/random
+DD=dd iflag=fullblock
 
 CA_VALIDITY=710
 CERT_VALIDITY=710
@@ -10,7 +13,7 @@ CERT_VALIDITY=710
 all: CERT.ca CERT.web CERT.mark PKG.mark.p12
 
 KEY.ca:
-	openssl rand -out RAND ${RAND_AMOUNT}
+	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
 	openssl genrsa -out KEY.ca -rand RAND ${KEY_SIZE}
 	rm -f RAND
 
@@ -20,7 +23,7 @@ CERT.ca: KEY.ca CONFIG.ca
 	openssl verify -CAfile CERT.ca CERT.ca
 
 KEY.web:
-	openssl rand -out RAND ${RAND_AMOUNT}
+	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
 	openssl genrsa -out KEY.web -rand RAND ${KEY_SIZE}
 	rm -f RAND
 
@@ -35,7 +38,7 @@ CERT.web: REQ.web CONFIG.web KEY.ca CERT.ca
 	openssl verify -CAfile CERT.ca CERT.web
 
 KEY.mark:
-	openssl rand -out RAND ${RAND_AMOUNT}
+	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
 	openssl genrsa -out KEY.mark -rand RAND ${KEY_SIZE}
 	rm -f RAND
 
@@ -56,7 +59,7 @@ PKG.mark.p12: KEY.mark CERT.mark CERT.ca
 	openssl pkcs12 -noout -in PKG.mark.p12 -passin pass:${PASSWORD} -info
 
 create:
-	openssl rand -out RAND ${RAND_AMOUNT}
+	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
 	openssl genrsa -out KEY.create -rand RAND ${KEY_SIZE}
 	rm -f RAND
 	openssl req -key KEY.create -out REQ.create -days ${CERT_VALIDITY} \
