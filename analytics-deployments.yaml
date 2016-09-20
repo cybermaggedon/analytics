@@ -268,7 +268,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.12
+        image: gcr.io/trust-networks/web:0.13
         resources:
           requests:
             memory: "64M"
@@ -292,7 +292,7 @@ spec:
     spec:
       containers:
       - name: ca
-        image: gcr.io/trust-networks/ca:0.01
+        image: gcr.io/trust-networks/ca:0.03
         resources:
           requests:
             memory: "64M"

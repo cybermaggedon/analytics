@@ -8,7 +8,7 @@ DD=dd iflag=fullblock
 CA_VALIDITY=710
 CERT_VALIDITY=710
 
-VERSION=0.02
+VERSION=0.03
 
 all: CERT.ca ../web/KEY.web ../web/CERT.web ../web/CERT.ca
 
