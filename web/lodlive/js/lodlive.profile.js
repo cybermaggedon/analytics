@@ -12,7 +12,7 @@ $.jStorage.set('profile', {
 			},
 			useForInverseSameAs : true,
 			/*change this*/
-			endpoint : 'http://104.196.115.236:8081/sparql',
+			endpoint : 'https://analytics.trustnetworks.com/sparql/ep',
 			examples : [{
 				label : 'test 1',
 				uri : 'http://mysite.com/aaa'
