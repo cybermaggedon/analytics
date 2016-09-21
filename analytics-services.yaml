@@ -87,7 +87,6 @@ spec:
     protocol: TCP
   selector:
     app: kibana
-  type: LoadBalancer
 ----
 apiVersion: v1
 kind: Service
@@ -102,7 +101,6 @@ spec:
     protocol: TCP
   selector:
     app: sparql
-  type: LoadBalancer
 ----
 apiVersion: v1
 kind: Service
