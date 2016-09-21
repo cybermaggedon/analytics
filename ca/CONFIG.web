@@ -4,7 +4,7 @@ distinguished_name=dn
 req_extensions=v3_req
 
 [dn]
-commonName=tnw.stanhope.house
+commonName=analytics.trustnetworks.com
 organizationalUnitName=Trust Networks operations
 organizationName=Trust Networks
 emailAddress=operations@trustnetworks.com
@@ -12,13 +12,6 @@ emailAddress=operations@trustnetworks.com
 [v3_req]
 basicConstraints=CA:false
 keyUsage=nonRepudiation, digitalSignature, keyEncipherment
-subjectAltName=@alt_names
-
-[alt_names]
-DNS.1=tns.stanhope.house
-DNS.2=localhost
-DNS.3=localhost.localdomain
-IP.1=104.196.27.10
-IP.2=127.0.0.1
-IP.3=::1
+# The altname is ignored by the signing.
+#subjectAltName=IP:104.196.27.10
 

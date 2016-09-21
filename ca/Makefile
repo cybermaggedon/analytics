@@ -1,14 +1,14 @@
 
 KEY_SIZE=4096
-RAND_COUNT=1024
-RAND_BLOCK=128
+RAND_COUNT=64
+RAND_BLOCK=16
 RANDOM_DEVICE=/dev/random
 DD=dd iflag=fullblock
 
 CA_VALIDITY=710
 CERT_VALIDITY=710
 
-VERSION=0.03
+VERSION=0.04
 
 all: CERT.ca ../web/KEY.web ../web/CERT.web ../web/CERT.ca
 
@@ -36,7 +36,8 @@ REQ.web: KEY.web CONFIG.web
 CERT.web: REQ.web CONFIG.web KEY.ca CERT.ca
 	openssl x509 -req -in REQ.web -CAkey KEY.ca \
 		-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-		-out CERT.web -days ${CERT_VALIDITY}
+		-out CERT.web -days ${CERT_VALIDITY} \
+		-addtrust serverAuth
 	openssl verify -CAfile CERT.ca CERT.web
 
 clean:

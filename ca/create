@@ -3,8 +3,8 @@
 PASSWORD=$(uuidgen | cut -d- -f1)
 
 KEY_SIZE=4096
-RAND_COUNT=1024
-RAND_BLOCK=128
+RAND_COUNT=64
+RAND_BLOCK=16
 RANDOM_DEVICE=/dev/urandom
 DD="dd iflag=fullblock"
 
@@ -51,7 +51,8 @@ echo '**** Signing request...'
 # Sign certificate request to create certificate.
 openssl x509 -req -in ${REQ_FILE} -CAkey KEY.ca \
 	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-	-out ${CERT_FILE} -days ${CERT_VALIDITY}
+	-out ${CERT_FILE} -days ${CERT_VALIDITY} \
+	-addtrust clientAuth
 if [ $? -ne 0 ]
 then
     echo Certificate signing failed. 1>&2
