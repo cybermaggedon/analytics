@@ -1,23 +1,121 @@
 
+Analytics cluster
+=================
+
+Component containers
+--------------------
+
+gcr.io/trust-networks/analytics:
+  A streaming analytics configuration with the Trust Networks analytics.
+  
+cassandra:
+  Standard Cassandra deployment
+  
+elasticsearch:
+  Standard ElasticSearch deployment
+  
+cybermaggedon/gaffer:
+  Gaffer (graph store).  Deployed, but not currently used.
+
+cybermaggedon/cybermon:
+  The cybermon part of the cyberprobe system.  Receives IP packets, and
+  outputs events.  Here, we configure to deliver to the streaming analytics
+  service.
+  
+kibana:
+  Standard Kibana deployment.
+  
+cybermaggedon/sparql-cassandra:
+  A SPARQL endpoint for the data we store in Cassandra.
+  
+gcr.io/trust-networks/web:
+  Web front-end, hosts static code, and also proxies out to the other
+  web-based services.
+
+gcr.io/trust-networks/ca:
+  Certificate Authority service for Trust Networks, containing the
+  Trust Networks private key.  The CA container offers no external services.
+  The only way to interact with it is to connect using the Google Cloud API
+  for which you need a private key from the cloud project.
+
+Container masters
+-----------------
+
+These containers are official Docker containers:
+  cassandra, elasticsearch, kibana
+
+These containers are maintained by cybermaggedon:
+  cybermaggedon/gaffer, cybermaggedon/cybermon, cybermaggedon/sparql-cassandra
+
+These containers are managed here:
+  gcr.io/trust-networks/analytics
+  gcr.io/trust-networks/web
+  gcr.io/trust-networks/ca
+
+Maintaining the containers
+--------------------------
+
+To build containers and push them: Here are the rules:
+ - If you are pushing a new container, update the version.  Otherwise, Google
+   will cache the old version.
+ - If you are pushing the web container, you need to create certs, which
+   means pushing a new CA.
+ - CA container needs to be built before web container.
+
+To change a container version, change the appropriate Makefile, and change
+the image entry in analytics-deployments.yaml
+
+Note for editing YAML files: No tabs!  All indent must be spaces!
+
+CA container
+------------
+
+  cd ca
+  make clean
+  make
+  make container
+  make push
+
+Web container
+-------------
+
+  cd web
+  make
+  make push
+
+Analytics cluster
+-----------------
+
+  cd analyics
+  make
+  make push
+  
+Deploying the cluster
+---------------------
+
 gcloud init
 
 gcloud config set compute/zone us-east1-b
 
 # 4 node cluster, n1-standard-4
+a=https://www.googleapis.com/auth
 gcloud container --project "trust-networks" clusters create "analytics" \
   --zone "us-east1-b" --machine-type "n1-standard-4" \
-  --scopes "https://www.googleapis.com/auth/compute","https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly" \
+  --scopes "${a}/compute","${a}/devstorage.read_only","${a}/logging.write","${a}/monitoring","${a}/servicecontrol","${a}/service.management.readonly" \
   --num-nodes "4" --network "default" --enable-cloud-logging \
   --enable-cloud-monitoring
   
 # 25 GB disk for Cassandra
-gcloud compute --project "trust-networks" disks create "cassandra-0000" --size "25" --zone "us-east1-b" --type "pd-standard"
+gcloud compute --project "trust-networks" disks create "cassandra-0000" \
+  --size "25" --zone "us-east1-b" --type "pd-standard"
 
 # 25 GB disk for ES
-gcloud compute --project "trust-networks" disks create "elasticsearch-0000" --size "25" --zone "us-east1-b" --type "pd-standard"
+gcloud compute --project "trust-networks" disks create "elasticsearch-0000" \
+  --size "25" --zone "us-east1-b" --type "pd-standard"
 
 # 25 GB disk for Gaffer
-gcloud compute --project "trust-networks" disks create "gaffer-0000" --size "25" --zone "us-east1-b" --type "pd-standard"
+gcloud compute --project "trust-networks" disks create "gaffer-0000" \
+  --size "25" --zone "us-east1-b" --type "pd-standard"
 
 gcloud container clusters get-credentials analytics \
   --zone us-east1-b --project trust-networks
@@ -28,9 +126,27 @@ kubectl create -f analytics-services.yaml
 
 kubectl create -f analytics-deployments.yaml
 
+Upgrading the cluster
+---------------------
+
+Easiest way, you can just delete the particular deployment and re-create e.g.
+
+  kubectl delete deployment analytics
+  kubectl create -f analytics-deployments.yaml
+
+The create command ignores deployments which already exist.
+
+More elaborate options e.g. rolling upgrades are possible, but you need to
+read the documentation.
+
+Deleting the cluster
+--------------------
+
 # Tidy up
 
 kubectl delete -f analytics-services.yaml
 kubectl delete -f analytics-deployments.yaml
 
-gcloud compute --project "trust-networks" disks delete --zone "us-east1-b"  gaffer-0000  elasticsearch-0000 cassandra-0000
+gcloud compute --project "trust-networks" disks delete --zone "us-east1-b" \
+       gaffer-0000  elasticsearch-0000 cassandra-0000
+
