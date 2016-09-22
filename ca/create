@@ -1,9 +1,19 @@
 #!/bin/bash
 
+if [ $# -ne 2 ]
+then
+    echo 'Usage:' 1>&2
+    echo '  create "Full Name" full.name@trustnetworks.com' 1>&2
+    exit 1
+fi
+
 # Create a randomish password.
 PASSWORD=$(uuidgen | cut -d- -f1)
 
+# RSA key size.
 KEY_SIZE=4096
+
+# Random generation parameters.
 RAND_COUNT=64
 RAND_BLOCK=16
 RANDOM_DEVICE=/dev/urandom
@@ -12,14 +22,34 @@ DD="dd iflag=fullblock"
 # Certificates valid for 2 years.
 CERT_VALIDITY=710
 
-ca_dir
+mkdir -p /ca 1>/dev/null
 
-# 
-RAND_FILE=RAND.user$$
-KEY_FILE=KEY.user$$
-CERT_FILE=CERT.user$$
-REQ_FILE=REQ.user$$
-PKG_FILE=PKG.user$$
+# Temporary files.
+RAND_FILE=/ca/RAND.user$$
+KEY_FILE=/ca/KEY.user$$
+REQ_FILE=/ca/REQ.user$$
+CONFIG_FILE=/ca/CONFIG.user$$
+
+# Output files.
+CERT_FILE=/ca/CERT.user$$
+PKG_FILE=/ca/PKG.user$$
+
+# Create config file
+
+name=$1
+email=$2
+
+cat <<EOT >> ${CONFIG_FILE}
+[req]
+distinguished_name=dn
+prompt=no
+
+[dn]
+commonName=${name}
+organizationalUnitName=Users
+organizationName=Trust Networks
+emailAddress=${email}
+EOT
 
 # Create random data.
 echo '**** Create random data...'
@@ -44,17 +74,20 @@ rm -f ${RAND_FILE}
 
 # Create certificate request.
 echo '**** Generate certificate request...'
-openssl req -key ${KEY_FILE} -out ${REQ_FILE} -new -config CONFIG.create
+openssl req -key ${KEY_FILE} -out ${REQ_FILE} -new \
+	-config ${CONFIG_FILE}
 if [ $? -ne 0 ]
 then
     echo Certificate request creation failed. 1>&2
     exit 1
 fi
 
+rm -f ${CONFIG_FILE}
+
 echo '**** Signing request...'
 # Sign certificate request to create certificate.
-openssl x509 -req -in ${REQ_FILE} -CAkey KEY.ca \
-	-CA CERT.ca -CAcreateserial -CAserial SERIAL \
+openssl x509 -req -in ${REQ_FILE} -CAkey /cert/key.ca \
+	-CA /cert/cert.ca -CAcreateserial -CAserial SERIAL \
 	-out ${CERT_FILE} -days ${CERT_VALIDITY} \
 	-addtrust clientAuth
 if [ $? -ne 0 ]
@@ -68,7 +101,7 @@ rm -f ${REQ_FILE}
 
 # Verify.
 echo '**** Verify certificate...'
-openssl verify -CAfile CERT.ca ${CERT_FILE}
+openssl verify -CAfile /cert/cert.ca ${CERT_FILE}
 if [ $? -ne 0 ]
 then
     echo Certificate verification failed. 1>&2
@@ -79,15 +112,20 @@ fi
 echo '**** Create key/certificate package...'
 openssl pkcs12 -export -passout pass:${PASSWORD} -inkey ${KEY_FILE} \
 	-in ${CERT_FILE} -caname 'Trust Networks' \
-	-certfile CERT.ca -out ${PKG_FILE}
+	-certfile /cert/cert.ca -out ${PKG_FILE}
 if [ $? -ne 0 ]
 then
     echo Package creation failed. 1>&2
     exit 1
 fi
 
+(
+    openssl x509 -in ${CERT_FILE}  -noout -serial -email -subject -dates
+    echo '----'
+) >> REGISTER
+
 # Remove stuff not needed.
-#rm -f ${KEY_FILE} ${CERT_FILE}
+rm -f ${KEY_FILE}
 
 echo '**** All complete.'
 

@@ -117,6 +117,10 @@ gcloud compute --project "trust-networks" disks create "elasticsearch-0000" \
 gcloud compute --project "trust-networks" disks create "gaffer-0000" \
   --size "25" --zone "us-east1-b" --type "pd-standard"
 
+# 1 GB disk for CA
+gcloud compute --project "trust-networks" disks create "ca-0000" \
+  --size "1" --zone "us-east1-b" --type "pd-standard"
+
 gcloud container clusters get-credentials analytics \
   --zone us-east1-b --project trust-networks
 

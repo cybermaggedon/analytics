@@ -50,7 +50,8 @@ upload:
 	kubectl create secret generic ca-cert \
 	  --from-file=cert.ca=CERT.ca --from-file=key.ca=KEY.ca
 	kubectl create secret generic web-cert \
-	  --from-file=cert.web=CERT.web --from-file=key.web=KEY.web
+	  --from-file=cert.web=CERT.web --from-file=key.web=KEY.web \
+	  --from-file=cert.ca=CERT.ca
 
 delete:
 	-kubectl delete secret ca-cert

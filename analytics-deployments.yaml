@@ -278,6 +278,14 @@ spec:
             cpu: "0.5"
         ports:
         - containerPort: 443
+        volumeMounts:
+        - mountPath: /cert
+          name: web-cert
+          readOnly: True
+      volumes:
+      - name: web-cert
+        secret:
+          secretName: web-cert
 ----
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -296,7 +304,21 @@ spec:
         resources:
           requests:
             memory: "64M"
-            cpu: "0.01"
+            cpu: "0.1"
           limits:
             memory: "64M"
-            cpu: "0.01"
+            cpu: "0.5"
+        volumeMounts:
+        - mountPath: /cert
+          name: ca-cert
+          readOnly: True
+        - mountPath: /ca
+          name: ca-data
+      volumes:
+      - name: ca-cert
+        secret:
+          secretName: ca-cert
+      - name: ca-data
+        gcePersistentDisk:
+          pdName: ca-0000
+          fsType: ext4
