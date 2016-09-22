@@ -120,6 +120,9 @@ gcloud compute --project "trust-networks" disks create "gaffer-0000" \
 gcloud container clusters get-credentials analytics \
   --zone us-east1-b --project trust-networks
 
+# For this step, you need to have an appropriate private.json key file
+# from the Google cloud console.  The key file is for a service with the
+# appropriate permissions.
 kubectl create secret generic keys --from-file=private.json
 
 kubectl create -f analytics-services.yaml
