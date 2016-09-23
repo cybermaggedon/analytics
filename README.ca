@@ -1,31 +1,27 @@
 
 1) Get the CA POD ID.  It's the first field.
 
-  % kubectl get pods | grep ca-
+  % kubectl get pods | grep ^ca-
   ca-1021806015-e9i67              1/1       Running            0          9m
 
 2) Use POD ID to execute /ca/create.  Substitute your POD ID.
 
-  % kubectl exec -i -t ca-1021806015-e9i67 bash
-  root% cd /ca
-  root% ./create
+  kubectl exec ca-1021806015-e9i67 create 'Mia Bat' mia.bat@trustnetworks.com
 
-3) Dialogue about certificate creation.  There are four questions you are
-   prompted for.  You need to get your name right, and put your email address
-   in.  Everything else, use defaults.
-
-4) Finally it says something this, and you need to record the filename and
-   password.
+3) Stuff is output, if it works, it says something like this...
   
   **** All complete.
-  PKCS12 package is in PKG.user44.
+  PKCS12 package is in pkg.80DB2C50787BB6C0.p12.
   Password is 5abc5de7.
 
-5) Type exit to exit out of the container.
+Note: your certificate is stored and we can recover it.
 
-6) Copy the PKCS12 file out of the container.  You need the POD ID again.
+Your private key is in that pkg file!  It is password protected, and the only
+record to it is there on the screen!  So, take a copy.
 
-   % kubectl exec ca-1021806015-e9i67 cat /ca/PKG.user44 > my.p12
+4) Copy the PKCS12 file out of the container.  You need the POD ID again.
+
+   % kubectl exec ca-1021806015-e9i67 cat /ca/pkg.80DB2C50787BB6C0.p12 > my.p12
 
 You now have the PKCS12 file on your local box.  It is password protected.
 Loading it into your browser is browser-specific:
@@ -43,4 +39,6 @@ Loading it into your browser is browser-specific:
     Download p12 file, drag it onto the Keychain access tool.  Add to your
     login keychain.  Find the Trust Networks certificate, open it, open
     trust, select always trust.
+
+Suggest you keep a copy, and put your password somewhere safe!
 

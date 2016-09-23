@@ -133,14 +133,14 @@ rm -f ${KEY_FILE}
 # Get certificate serial.
 serial=$(openssl x509 -in ${CERT_FILE} -noout -serial | sed 's/serial=//')
 
-mv ${CERT_FILE} cert.${serial}
-CERT_FILE=cert.${serial}
+mv ${CERT_FILE} ${ca}/cert.${serial}
+CERT_FILE=${ca}/cert.${serial}
 
-mv ${PKG_FILE} pkg.${serial}.p12
-PKG_FILE=${serial}.p12
+mv ${PKG_FILE} ${ca}/pkg.${serial}.p12
+PKG_FILE=${ca}/pkg.${serial}.p12
 
 echo '**** All complete.'
 
-echo PKCS12 package is in pkg.${PKG_FILE}.
-echo Password is ${PASSWORD}.
+echo PKCS12 package is in ${PKG_FILE}
+echo Password is ${PASSWORD}
 

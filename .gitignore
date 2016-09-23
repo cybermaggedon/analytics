@@ -1,5 +1,5 @@
 *~
-certs/CERT.*
-certs/KEY.*
-certs/REQ.*
-certs/SERIAL
+certs/cert.*
+certs/key.*
+certs/req.*
+certs/serial
