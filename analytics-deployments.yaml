@@ -268,7 +268,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.15
+        image: gcr.io/trust-networks/web:0.18
         resources:
           requests:
             memory: "64M"
@@ -300,7 +300,7 @@ spec:
     spec:
       containers:
       - name: ca
-        image: gcr.io/trust-networks/ca:0.04
+        image: gcr.io/trust-networks/ca:0.10
         resources:
           requests:
             memory: "64M"
@@ -314,6 +314,11 @@ spec:
           readOnly: True
         - mountPath: /ca
           name: ca-data
+        env:
+        - name: CA
+          value: /ca
+        - name: CA_CERT
+          value: /cert
       volumes:
       - name: ca-cert
         secret:

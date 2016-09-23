@@ -7,6 +7,9 @@ then
     exit 1
 fi
 
+ca=${CA:-.}
+ca_cert=${CA_CERT:-.}
+
 # Create a randomish password.
 PASSWORD=$(uuidgen | cut -d- -f1)
 
@@ -14,25 +17,23 @@ PASSWORD=$(uuidgen | cut -d- -f1)
 KEY_SIZE=4096
 
 # Random generation parameters.
-RAND_COUNT=64
-RAND_BLOCK=16
+RAND_COUNT=128
+RAND_BLOCK=32
 RANDOM_DEVICE=/dev/urandom
 DD="dd iflag=fullblock"
 
 # Certificates valid for 2 years.
 CERT_VALIDITY=710
 
-mkdir -p /ca 1>/dev/null
-
 # Temporary files.
-RAND_FILE=/ca/RAND.user$$
-KEY_FILE=/ca/KEY.user$$
-REQ_FILE=/ca/REQ.user$$
-CONFIG_FILE=/ca/CONFIG.user$$
+RAND_FILE=${ca}/rand.user$$
+KEY_FILE=${ca}/key.user$$
+REQ_FILE=${ca}/req.user$$
+CONFIG_FILE=${ca}/config.user$$
 
 # Output files.
-CERT_FILE=/ca/CERT.user$$
-PKG_FILE=/ca/PKG.user$$
+CERT_FILE=${ca}/cert.user$$
+PKG_FILE=${ca}/pkg.user$$
 
 # Create config file
 
@@ -86,10 +87,10 @@ rm -f ${CONFIG_FILE}
 
 echo '**** Signing request...'
 # Sign certificate request to create certificate.
-openssl x509 -req -in ${REQ_FILE} -CAkey /cert/key.ca \
-	-CA /cert/cert.ca -CAcreateserial -CAserial SERIAL \
-	-out ${CERT_FILE} -days ${CERT_VALIDITY} \
-	-addtrust clientAuth
+openssl x509 -req -in ${REQ_FILE} -CAkey ${ca_cert}/key.ca \
+	-CA ${ca_cert}/cert.ca -CAcreateserial -CAserial ${ca}/serial \
+	-out ${CERT_FILE} -days ${CERT_VALIDITY}
+#	-addtrust clientAuth
 if [ $? -ne 0 ]
 then
     echo Certificate signing failed. 1>&2
@@ -101,7 +102,7 @@ rm -f ${REQ_FILE}
 
 # Verify.
 echo '**** Verify certificate...'
-openssl verify -CAfile /cert/cert.ca ${CERT_FILE}
+openssl verify -CAfile ${ca_cert}/cert.ca ${CERT_FILE}
 if [ $? -ne 0 ]
 then
     echo Certificate verification failed. 1>&2
@@ -112,7 +113,7 @@ fi
 echo '**** Create key/certificate package...'
 openssl pkcs12 -export -passout pass:${PASSWORD} -inkey ${KEY_FILE} \
 	-in ${CERT_FILE} -caname 'Trust Networks' \
-	-certfile /cert/cert.ca -out ${PKG_FILE}
+	-certfile ${ca_cert}/cert.ca -out ${PKG_FILE}
 if [ $? -ne 0 ]
 then
     echo Package creation failed. 1>&2
@@ -122,13 +123,24 @@ fi
 (
     openssl x509 -in ${CERT_FILE}  -noout -serial -email -subject -dates
     echo '----'
-) >> REGISTER
+) >> ${ca}/register
 
 # Remove stuff not needed.
 rm -f ${KEY_FILE}
 
+# This leaves the certificate and the package.  Now, rename them.
+
+# Get certificate serial.
+serial=$(openssl x509 -in ${CERT_FILE} -noout -serial | sed 's/serial=//')
+
+mv ${CERT_FILE} cert.${serial}
+CERT_FILE=cert.${serial}
+
+mv ${PKG_FILE} pkg.${serial}.p12
+PKG_FILE=${serial}.p12
+
 echo '**** All complete.'
 
-echo PKCS12 package is in ${PKG_FILE}.
+echo PKCS12 package is in pkg.${PKG_FILE}.
 echo Password is ${PASSWORD}.
 

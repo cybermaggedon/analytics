@@ -1,5 +1,5 @@
 
-VERSION=0.04
+VERSION=0.10
 
 all: container
 

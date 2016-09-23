@@ -8,50 +8,49 @@ DD=dd iflag=fullblock
 CA_VALIDITY=710
 CERT_VALIDITY=710
 
-all: CERT.ca CERT.web
+all: cert.ca cert.web
 
-#../web/KEY.web ../web/CERT.web ../web/CERT.ca: ../web/%: %
+#../web/KEY.web ../web/cert.web ../web/cert.ca: ../web/%: %
 #	cp $? $@
 
-KEY.ca:
-	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
-	openssl genrsa -out KEY.ca -rand RAND ${KEY_SIZE}
-	rm -f RAND
+key.ca:
+	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=rand
+	openssl genrsa -out $@ -rand rand ${KEY_SIZE}
+	rm -f rand
 
-CERT.ca: KEY.ca CONFIG.ca
-	openssl req -key KEY.ca -out CERT.ca -days ${CA_VALIDITY} \
-		-x509 -new -config CONFIG.ca
-	openssl verify -CAfile CERT.ca CERT.ca
+cert.ca: key.ca config.ca
+	openssl req -key key.ca -out $@ -days ${CA_VALIDITY} \
+		-x509 -new -config config.ca
+	openssl verify -CAfile $@ $@
 
-KEY.web:
-	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=RAND
-	openssl genrsa -out KEY.web -rand RAND ${KEY_SIZE}
-	rm -f RAND
+key.web:
+	${DD} bs=${RAND_BLOCK} count=${RAND_COUNT} if=${RANDOM_DEVICE} of=rand
+	openssl genrsa -out $@ -rand rand ${KEY_SIZE}
+	rm -f rand
 
-REQ.web: KEY.web CONFIG.web
-	openssl req -key KEY.web -out REQ.web -new -config CONFIG.web
+req.web: key.web config.web
+	openssl req -key key.web -out $@ -new -config config.web
 
-CERT.web: REQ.web CONFIG.web KEY.ca CERT.ca
-	openssl x509 -req -in REQ.web -CAkey KEY.ca \
-		-CA CERT.ca -CAcreateserial -CAserial SERIAL \
-		-out CERT.web -days ${CERT_VALIDITY} \
-		-addtrust serverAuth
-	openssl verify -CAfile CERT.ca CERT.web
+cert.web: req.web config.web key.ca cert.ca
+	openssl x509 -req -in req.web -CAkey key.ca \
+		-CA cert.ca -CAcreateserial -CAserial serial \
+		-out $@ -days ${CERT_VALIDITY}
+#		-addtrust serverAuth
+	openssl verify -CAfile cert.ca $@
 
 clean:
-	rm -f KEY.*
-	rm -f CERT.*
-	rm -f REQ.*
-	rm -f PKG.*
-	rm -f RAND
-	rm -f SERIAL
+	rm -f key.*
+	rm -f cert.*
+	rm -f req.*
+	rm -f pkg.*
+	rm -f rand
+	rm -f serial
 
 upload:
 	kubectl create secret generic ca-cert \
-	  --from-file=cert.ca=CERT.ca --from-file=key.ca=KEY.ca
+	  --from-file=cert.ca --from-file=key.ca
 	kubectl create secret generic web-cert \
-	  --from-file=cert.web=CERT.web --from-file=key.web=KEY.web \
-	  --from-file=cert.ca=CERT.ca
+	  --from-file=cert.web --from-file=key.web --from-file=cert.ca
 
 delete:
 	-kubectl delete secret ca-cert
