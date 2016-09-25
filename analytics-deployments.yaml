@@ -204,14 +204,14 @@ spec:
         image: cybermaggedon/cybermon:0.77
         resources:
           requests:
-            memory: "256M"
-            cpu: "0.4"
+            memory: "1024M"
+            cpu: "0.5"
           limits:
-            memory: "512M"
-            cpu: "0.8"
+            memory: "2048M"
+            cpu: "1.5"
         env:
         - name: ZMQ_CONNECT
-          value: tcp://analytics:5555
+          value: tcp://events:5555
         ports:
         - containerPort: 9000
 ----

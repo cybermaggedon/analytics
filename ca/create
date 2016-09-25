@@ -12,6 +12,7 @@ ca_cert=${CA_CERT:-.}
 
 # Create a randomish password.
 PASSWORD=$(uuidgen | cut -d- -f1)
+PASSWORD=${PASSWORD}$(uuidgen | cut -d- -f1)
 
 # RSA key size.
 KEY_SIZE=4096

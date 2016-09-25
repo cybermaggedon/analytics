@@ -11,8 +11,8 @@
 3) Stuff is output, if it works, it says something like this...
   
   **** All complete.
-  PKCS12 package is in pkg.80DB2C50787BB6C0.p12.
-  Password is 5abc5de7.
+  PKCS12 package is in /ca/pkg.80DB2C50787BB6C0.p12
+  Password is 5abc5de7
 
 Note: your certificate is stored and we can recover it.
 
