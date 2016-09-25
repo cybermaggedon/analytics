@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+import zmq.auth.certs as certs
+
+certs.create_certificates(".", "publisher", { "name": "analytics-publisher"})
+
+certs.create_certificates(".", "dev-client", { "name": "dev-client"})
+

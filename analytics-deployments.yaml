@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:mvp2r
+        image: gcr.io/trust-networks/analytics:0.33
         livenessProbe:
           exec:
             command:
@@ -26,12 +26,22 @@ spec:
             memory: "512M"
             cpu: "1.0"
         volumeMounts:
-        - mountPath: /wye/key
+        - mountPath: /key
           name: keys
+          readOnly: True
+        - mountPath: /curve-public
+          name: analytics-curve-client-keys
+          readOnly: True
+        - mountPath: /curve-private
+          name: analytics-curve-publisher-private
           readOnly: True
         env:
         - name: KEY
-          value: /wye/key/private.json
+          value: /key/private.json
+        - name: CURVE_PUBLIC
+          value: /curve-public
+        - name: CURVE_PRIVATE
+          value: /curve-private
         - name: BIGQUERY_PROJECT
           value: trust-networks
         - name: BIGQUERY_DATASET
@@ -46,8 +56,6 @@ spec:
           value: rdf
         - name: CASSANDRA_CONTACTS
           value: '["cassandra"]'
-        - name: ZMQ_BINDING
-          value: tcp://10.142.0.2:5555
         - name: ELASTICSEARCH_INDEX
           value: cyberprobe
         - name: ELASTICSEARCH_OBJECT
@@ -61,10 +69,18 @@ spec:
           name: management
         - containerPort: 5555
           name: input
+        - containerPort: 5556
+          name: publisher
       volumes:
       - name: keys
         secret:
           secretName: keys
+      - name: analytics-curve-client-keys
+        secret:
+          secretName: analytics-curve-client-keys
+      - name: analytics-curve-publisher-private
+        secret:
+          secretName: analytics-curve-publisher-private
 ----
 apiVersion: extensions/v1beta1
 kind: Deployment

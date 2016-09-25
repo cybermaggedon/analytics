@@ -10,12 +10,39 @@ spec:
     port: 7070
     targetPort: 8080
     protocol: TCP
+  selector:
+    app: analytics
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: events
+  labels:
+    app: events
+spec:
+  ports:
   - name: input
     port: 5555
     targetPort: 5555
     protocol: TCP
   selector:
     app: analytics
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: publisher
+  labels:
+    app: publisher
+spec:
+  ports:
+  - name: publisher
+    port: 5556
+    targetPort: 5556
+    protocol: TCP
+  selector:
+    app: analytics
+  type: LoadBalancer
 ----
 apiVersion: v1
 kind: Service
