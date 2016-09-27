@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:0.33
+        image: gcr.io/trust-networks/analytics:0.34
         livenessProbe:
           exec:
             command:

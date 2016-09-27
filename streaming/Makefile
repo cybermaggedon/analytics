@@ -1,5 +1,5 @@
 
-VERSION=0.33
+VERSION=0.34
 
 container:
 	docker build -t gcr.io/trust-networks/analytics:${VERSION} .

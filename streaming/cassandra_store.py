@@ -193,7 +193,10 @@ def output(obs):
             except Exception, e:
                 sys.stderr.write("Exception: %s\n" % str(e))
                 time.sleep(0.1)
-                continue
+
+                # FIXME: Ignore errors for now.
+                break
+#                continue
                 
 ############################################################################
 
