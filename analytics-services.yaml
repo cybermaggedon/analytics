@@ -148,3 +148,18 @@ spec:
   selector:
     app: web
   type: LoadBalancer
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-classifier
+  labels:
+    app: url-classifier
+spec:
+  ports:
+  - name: host-classifier
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: url-classifier

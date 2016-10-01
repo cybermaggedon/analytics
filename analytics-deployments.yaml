@@ -204,11 +204,11 @@ spec:
         image: cybermaggedon/cybermon:0.77
         resources:
           requests:
-            memory: "1024M"
-            cpu: "0.5"
+            memory: "128M"
+            cpu: "0.2"
           limits:
-            memory: "2048M"
-            cpu: "1.5"
+            memory: "1024M"
+            cpu: "1.0"
         env:
         - name: ZMQ_CONNECT
           value: tcp://events:5555
@@ -247,7 +247,7 @@ kind: Deployment
 metadata:
   name: sparql
 spec:
-  replicas: 8
+  replicas: 2
   template:
     metadata:
       labels:
@@ -284,7 +284,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.19
+        image: gcr.io/trust-networks/web:0.20
         resources:
           requests:
             memory: "64M"
@@ -343,3 +343,25 @@ spec:
         gcePersistentDisk:
           pdName: ca-0000
           fsType: ext4
+----
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: url-classifier
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: url-classifier
+    spec:
+      containers:
+      - name: ca
+        image: gcr.io/trust-networks/url-classifier:0.01
+        resources:
+          requests:
+            memory: "512M"
+            cpu: "0.1"
+          limits:
+            memory: "512M"
+            cpu: "0.5"
