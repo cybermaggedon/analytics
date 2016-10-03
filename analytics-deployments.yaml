@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:0.34
+        image: gcr.io/trust-networks/analytics:0.39
         livenessProbe:
           exec:
             command:
@@ -20,7 +20,7 @@ spec:
           timeoutSeconds: 10
         resources:
           requests:
-            memory: "64M"
+            memory: "256M"
             cpu: "0.5"
           limits:
             memory: "512M"
@@ -64,6 +64,8 @@ spec:
           value: http://elasticsearch:9200
         - name: GAFFER_URL
           value: http://gaffer:8080/example-rest/v1
+        - name: HDFS_URL
+          value: http://hadoop-m:50070/
         ports:
         - containerPort: 8080
           name: management
