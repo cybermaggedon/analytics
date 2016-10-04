@@ -7,7 +7,8 @@ import requests
 import socket
 import os
 import time, datetime
-import hdfs
+from google.cloud import storage
+from oauth2client.service_account import ServiceAccountCredentials
 import uuid
 
 ############################################################################
@@ -26,21 +27,28 @@ ctrl.write("RUNNING\n")
 ctrl.flush()
 
 ############################################################################
-    
-url = os.getenv("HDFS_URL", "http://hdfs:50070")
-user = "hdfs"
-basedir = "/cyberprobe/"
+
+private = os.getenv("KEY", "private.json")
+bucket_name = "trustnetworks"
+basedir = "cyberprobe/"
 
 ############################################################################
 
-client = hdfs.client.InsecureClient(url, user=user)
+# Creds
+credentials = ServiceAccountCredentials.from_json_keyfile_name(private)
+
+############################################################################
+
+client = storage.Client(credentials=credentials)
 
 try:
-    client.makedirs(basedir)
+    client.create_bucket(bucket_name)
 except Exception, e:
-    sys.stderr.write("Directory %s creation failed (ignored): %s\n" %
-                     (basedir, e))
+    sys.stderr.write("googlestorage: Bucket %s create failed (ignored): %s\n" %
+                     (bucket_name, e))
     sys.stderr.flush()
+
+bucket = client.get_bucket(bucket_name)
 
 data=[]
 
@@ -60,29 +68,21 @@ def handle(msg):
 
     if (count > max_batch) or ((time.time() - last) > max_time):
 
-
         u = str(uuid.uuid4())
 
         dir = datetime.datetime.utcnow().strftime("%Y-%m-%d/%H-%M")
         dir = basedir + dir
 
-        try:
-            client.makedirs(dir)
-        except Exception, e:
-            sys.stderr.write("hadoop: create %s failed (ignored): %s\n" %
-                             (basedir, e))
-	    sys.stderr.flush()
-
         filedata = "\n".join(data)
         path = dir + "/" + u
         
         try:
-            with client.write(path, encoding='utf-8') as writer:
-                writer.write(filedata)
-            print "HDFS write: %s." % path
+            blob = bucket.blob(path)
+            blob.upload_from_string(filedata)
+            print "Google storage write: %s." % path
         except Exception, e:
-            sys.stderr.write("hadoop: creation failed for %s (ignored): %s\n" %
-                             (path, e))
+            sys.stderr.write("googlestorage: creation failed (ignored): %s\n" %
+                             e)
 	    sys.stderr.flush()
 
         data = []
@@ -96,7 +96,7 @@ while True:
         msg = skt.recv()
         handle(msg)
     except Exception, e:
-        sys.stderr.write("hadoop: Exception: %s\n" % str(e))
+        sys.stderr.write("googlestorage: Exception: %s\n" % str(e))
 	sys.stderr.flush()
         time.sleep(0.1)
 

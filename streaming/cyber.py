@@ -23,14 +23,14 @@ bq = job.define_python_worker("bigquery", "bigquery.py")
 es = job.define_python_worker("elasticsearch", "elasticsearch.py")
 gaffer = job.define_python_worker("gaffer", "gaffer.py")
 cassandra = job.define_python_worker("cassandra", "cassandra_store.py")
-hadoop = job.define_python_worker("hadoop", "hadoop.py")
+gs = job.define_python_worker("gs", "googlestorage.py")
 publisher = job.define_python_worker("publisher", "publisher.py")
 
 recv = job.define_python_worker("receiver", "receiver.py")
 recv.connect("output",
              [(webact, "input"), (dnsact, "input"), (fp, "input"),
               (bq, "input"), (es, "input"), (cassandra, "input"),
-              (hadoop, "input"), (publisher, "input")])
+              (gs, "input"), (publisher, "input")])
 
 job_id = job.implement()
 

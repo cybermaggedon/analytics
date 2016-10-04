@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:0.39
+        image: gcr.io/trust-networks/analytics:0.43
         livenessProbe:
           exec:
             command:
@@ -20,10 +20,10 @@ spec:
           timeoutSeconds: 10
         resources:
           requests:
-            memory: "256M"
-            cpu: "0.5"
-          limits:
             memory: "512M"
+            cpu: "1.0"
+          limits:
+            memory: "1024M"
             cpu: "1.0"
         volumeMounts:
         - mountPath: /key
