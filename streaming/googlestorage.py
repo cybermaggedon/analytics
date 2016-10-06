@@ -56,7 +56,7 @@ count=0
 last=time.time()
 
 max_batch=64 * 1024 * 1024
-max_time=300
+max_time=1800
 
 def handle(msg):
 
