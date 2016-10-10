@@ -381,7 +381,7 @@ spec:
     spec:
       containers:
       - name: vpn-server
-        image: gcr.io/trust-networks/vpn-server:0.07
+        image: gcr.io/trust-networks/vpn-server:0.17
         securityContext:
           capabilities:
             add:
@@ -415,7 +415,7 @@ spec:
     spec:
       containers:
       - name: vpn-ca
-        image: gcr.io/trust-networks/vpn-ca:0.05
+        image: gcr.io/trust-networks/vpn-ca:0.17
         resources:
           requests:
             memory: "64M"

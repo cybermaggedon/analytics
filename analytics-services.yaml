@@ -177,5 +177,5 @@ spec:
     targetPort: 1194
     protocol: UDP
   selector:
-    app: vpn-service
+    app: vpn-server
   type: LoadBalancer
