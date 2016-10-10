@@ -12,7 +12,7 @@ spec:
     protocol: TCP
   selector:
     app: analytics
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -27,7 +27,7 @@ spec:
     protocol: TCP
   selector:
     app: analytics
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -43,7 +43,7 @@ spec:
   selector:
     app: analytics
   type: LoadBalancer
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -57,7 +57,7 @@ spec:
     protocol: TCP
   selector:
     app: cassandra
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -71,7 +71,7 @@ spec:
     protocol: TCP
   selector:
     app: elasticsearch
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -85,7 +85,7 @@ spec:
     protocol: TCP
   selector:
     app: gaffer
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -100,7 +100,7 @@ spec:
   selector:
     app: cybermon
   type: LoadBalancer
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -114,7 +114,7 @@ spec:
     protocol: TCP
   selector:
     app: kibana
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -128,7 +128,7 @@ spec:
     protocol: TCP
   selector:
     app: sparql
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -148,7 +148,7 @@ spec:
   selector:
     app: web
   type: LoadBalancer
-----
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -163,3 +163,19 @@ spec:
     protocol: TCP
   selector:
     app: url-classifier
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vpn
+  labels:
+    app: vpn
+spec:
+  ports:
+  - name: vpn
+    port: 1194
+    targetPort: 1194
+    protocol: UDP
+  selector:
+    app: vpn-service
+  type: LoadBalancer

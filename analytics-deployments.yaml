@@ -83,7 +83,7 @@ spec:
       - name: analytics-curve-publisher-private
         secret:
           secretName: analytics-curve-publisher-private
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -122,7 +122,7 @@ spec:
         gcePersistentDisk:
           pdName: cassandra-0000
           fsType: ext4
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -157,7 +157,7 @@ spec:
         gcePersistentDisk:
           pdName: elasticsearch-0000
           fsType: ext4
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -189,7 +189,7 @@ spec:
         gcePersistentDisk:
           pdName: gaffer-0000
           fsType: ext4
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -216,7 +216,7 @@ spec:
           value: tcp://events:5555
         ports:
         - containerPort: 9000
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -243,7 +243,7 @@ spec:
           value: http://elasticsearch:9200
         ports:
         - containerPort: 5601
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -272,7 +272,7 @@ spec:
             cpu: "0.2"
         ports:
         - containerPort: 8081
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -304,7 +304,7 @@ spec:
       - name: web-cert
         secret:
           secretName: web-cert
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -345,7 +345,7 @@ spec:
         gcePersistentDisk:
           pdName: ca-0000
           fsType: ext4
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -367,3 +367,78 @@ spec:
           limits:
             memory: "512M"
             cpu: "0.5"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: vpn-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vpn-server
+    spec:
+      containers:
+      - name: vpn-server
+        image: gcr.io/trust-networks/vpn-server:0.07
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.2"
+          limits:
+            memory: "64M"
+            cpu: "0.5"
+        volumeMounts:
+        - mountPath: /key
+          name: vpn-server-key
+          readOnly: True
+      volumes:
+      - name: vpn-server-key
+        secret:
+          secretName: vpn-server-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: vpn-ca
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vpn-ca
+    spec:
+      containers:
+      - name: vpn-ca
+        image: gcr.io/trust-networks/vpn-ca:0.05
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.2"
+          limits:
+            memory: "64M"
+            cpu: "0.5"
+        volumeMounts:
+        - mountPath: /key
+          name: vpn-ca-key
+          readOnly: True
+        - mountPath: /ca
+          name: vpn-ca-data
+        env:
+        - name: CA_CERT
+          value: /key
+        - name: CA
+          value: /ca
+      volumes:
+      - name: vpn-ca-key
+        secret:
+          secretName: vpn-ca-key
+      - name: vpn-ca-data
+        gcePersistentDisk:
+          pdName: vpn-ca-data-0000
+          fsType: ext4

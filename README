@@ -137,6 +137,10 @@ gcloud compute --project "trust-networks" disks create "gaffer-0000" \
 gcloud compute --project "trust-networks" disks create "ca-0000" \
   --size "1" --zone "us-east1-b" --type "pd-standard"
 
+# 1 GB disk for VPN CA
+gcloud compute --project "trust-networks" disks create "vpn-ca-data-0000" \
+  --size "1" --zone "us-east1-b" --type "pd-standard"
+
 gcloud container clusters get-credentials analytics \
   --zone us-east1-b --project trust-networks
 
@@ -171,5 +175,5 @@ kubectl delete -f analytics-services.yaml
 kubectl delete -f analytics-deployments.yaml
 
 gcloud compute --project "trust-networks" disks delete --zone "us-east1-b" \
-       gaffer-0000  elasticsearch-0000 cassandra-0000 ca-0000
+       gaffer-0000  elasticsearch-0000 cassandra-0000 ca-0000 vpn-ca-data-0000
 
