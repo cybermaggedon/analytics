@@ -415,7 +415,7 @@ spec:
     spec:
       containers:
       - name: vpn-ca
-        image: gcr.io/trust-networks/vpn-ca:0.19
+        image: gcr.io/trust-networks/vpn-ca:0.20
         resources:
           requests:
             memory: "64M"
