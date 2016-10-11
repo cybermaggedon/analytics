@@ -381,17 +381,17 @@ spec:
     spec:
       containers:
       - name: vpn-server
-        image: gcr.io/trust-networks/vpn-server:0.17
+        image: gcr.io/trust-networks/vpn-server:0.27
         securityContext:
           capabilities:
             add:
               - NET_ADMIN
         resources:
           requests:
-            memory: "64M"
+            memory: "256M"
             cpu: "0.2"
           limits:
-            memory: "64M"
+            memory: "256M"
             cpu: "0.5"
         volumeMounts:
         - mountPath: /key
@@ -415,7 +415,7 @@ spec:
     spec:
       containers:
       - name: vpn-ca
-        image: gcr.io/trust-networks/vpn-ca:0.17
+        image: gcr.io/trust-networks/vpn-ca:0.19
         resources:
           requests:
             memory: "64M"
