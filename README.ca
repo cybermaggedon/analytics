@@ -4,7 +4,7 @@
   % kubectl get pods | grep ^ca-
   ca-1021806015-e9i67              1/1       Running            0          9m
 
-2) Use POD ID to execute /ca/create.  Substitute your POD ID.
+2) Use POD ID to execute create.  Substitute your POD ID.
 
   kubectl exec ca-1021806015-e9i67 create 'Mia Bat' mia.bat@trustnetworks.com
 
