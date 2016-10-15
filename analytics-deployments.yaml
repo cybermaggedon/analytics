@@ -257,7 +257,7 @@ spec:
     spec:
       containers:
       - name: sparql
-        image: cybermaggedon/sparql-cassandra:0.01
+        image: cybermaggedon/sparql-cassandra:0.02
         command:
         - "sparql"
         - "8081"

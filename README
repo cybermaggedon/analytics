@@ -138,12 +138,12 @@ gcloud init
 
 gcloud config set compute/zone us-east1-b
 
-# 4 node cluster, n1-standard-4
+# 2 node cluster, n1-standard-4
 a=https://www.googleapis.com/auth
 gcloud container --project "trust-networks" clusters create "analytics" \
   --zone "us-east1-b" --machine-type "n1-standard-4" \
   --scopes "${a}/compute","${a}/devstorage.read_only","${a}/logging.write","${a}/monitoring","${a}/servicecontrol","${a}/service.management.readonly" \
-  --num-nodes "4" --network "default" --enable-cloud-logging \
+  --num-nodes "2" --network "default" --enable-cloud-logging \
   --enable-cloud-monitoring
   
 # 25 GB disk for Cassandra
@@ -177,6 +177,15 @@ kubectl create secret generic keys --from-file=private.json
 kubectl create -f analytics-services.yaml
 
 kubectl create -f analytics-deployments.yaml
+
+Once the services are deployed, (check kubectl get services) they will
+get extern IP addresses.  You need to manually configure the trustnetworks
+domain with their IP addresses:
+
+  cybermon -> cybermon.ops.trustnetworks.com
+  publisher -> publisher.ops.trustnetworks.com
+  vpn -> vpn.ops.trustnetworks.com
+  web -> analytics.ops.trustnetworks.com
 
 Upgrading the cluster
 ---------------------
