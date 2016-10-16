@@ -38,7 +38,71 @@ ttl = "14d"
 ############################################################################
 
 def init():
-    pass
+
+    mapping = {
+        "mappings": {
+            es_object: {
+                "properties": {
+                    "time": { "type": "date" },
+                    "url": {
+                        "type": "string",
+                        "index": "not analyzed"
+                    },
+                    "queries": {
+                        "type": "string",
+                        "index": "not analyzed"
+                    },
+                    "action": {
+                        "type": "string",
+                        "index": "not analyzed"
+                    },
+                    "src": {
+                        "type": "object",
+                        "properties": {
+                            "ipv4": { "type": "ip" }
+                        }
+                    },
+                    "dest": {
+                        "type": "object",
+                        "properties": {
+                            "ipv4": { "type": "ip" }
+                        }
+                    },
+                    "answers": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "index": "not_analyzed"
+                            }
+                        }
+                    },
+                    "header": {
+                        "type": "object",
+                        "properties": {
+                            "User-Agent": {
+                                "type": "string",
+                                "index": "not_analyzed"
+                            },
+                            "Host": {
+                                "type": "string",
+                                "index": "not_analyzed"
+                            },
+                            "Content-Type": {
+                                "type": "string",
+                                "index": "not_analyzed"
+                            },
+                            "Server": {
+                                "type": "string",
+                                "index": "not_analyzed"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 def output(obs, id):
     obs = {
