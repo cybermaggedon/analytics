@@ -1,0 +1,74 @@
+
+EU VPN cluster
+==============
+
+Like the Analytics cluster, but without the analytics.
+
+It only contains the vpn-service container currently.  Same container as
+deployed in the US.
+
+Component containers
+--------------------
+
+gcr.io/trust-networks/vpn-server
+
+Container masters
+-----------------
+
+vpn-server are managed at github.com/trustnetworks/vpn-service:
+  gcr.io/trust-networks/vpn-server
+  
+Deploying the cluster
+---------------------
+
+# If needed.
+gcloud init
+
+gcloud config set compute/zone europe-west1-c
+
+# 3 node cluster, f1-micro
+a=https://www.googleapis.com/auth
+gcloud container --project "trust-networks" clusters create "eu-vpn" \
+  --zone "europe-west1-c" --machine-type "f1-micro" \
+  --scopes "${a}/compute","${a}/devstorage.read_only","${a}/logging.write","${a}/monitoring","${a}/servicecontrol","${a}/service.management.readonly" \
+  --num-nodes "3" --network "default" --enable-cloud-logging \
+  --enable-cloud-monitoring
+
+# No disks needed.
+
+gcloud container clusters get-credentials eu-vpn \
+  --zone europe-west1-c --project trust-networks
+
+# For this step, you need to have an appropriate VPN keys in as secrets.
+
+kubectl create -f eu-vpn-services.yaml
+
+kubectl create -f eu-vpn-deployments.yaml
+
+Once the service is running, need to update the DNS entry in
+Google cloud console.
+
+  eu-vpn -> eu-vpn.ops.trustnetworks.com
+
+Upgrading the cluster
+---------------------
+
+Easiest way, you can just delete the particular deployment and re-create e.g.
+
+  kubectl delete deployment analytics
+  kubectl create -f analytics-deployments.yaml
+
+The create command ignores deployments which already exist.
+
+More elaborate options e.g. rolling upgrades are possible, but you need to
+read the documentation.
+
+Deleting the cluster
+--------------------
+
+# Tidy up
+
+kubectl delete -f eu-vpn-services.yaml
+kubectl delete -f eu-vpn-deployments.yaml
+
+

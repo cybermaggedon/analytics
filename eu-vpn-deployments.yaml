@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: vpn-server
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: vpn-server
+    spec:
+      containers:
+      - name: vpn-server
+        image: gcr.io/trust-networks/vpn-server:0.27
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+        resources:
+          requests:
+            memory: "64M"
+            cpu: "0.2"
+          limits:
+            memory: "64M"
+            cpu: "0.5"
+        volumeMounts:
+        - mountPath: /key
+          name: vpn-server-key
+          readOnly: True
+      volumes:
+      - name: vpn-server-key
+        secret:
+          secretName: vpn-server-key
