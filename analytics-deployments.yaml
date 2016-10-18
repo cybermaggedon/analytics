@@ -249,7 +249,7 @@ kind: Deployment
 metadata:
   name: sparql
 spec:
-  replicas: 8
+  replicas: 2
   template:
     metadata:
       labels:
@@ -257,7 +257,7 @@ spec:
     spec:
       containers:
       - name: sparql
-        image: cybermaggedon/sparql-cassandra:0.02
+        image: cybermaggedon/sparql-cassandra:0.03
         command:
         - "sparql"
         - "8081"
