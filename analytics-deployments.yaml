@@ -249,7 +249,7 @@ kind: Deployment
 metadata:
   name: sparql
 spec:
-  replicas: 2
+  replicas: 4
   template:
     metadata:
       labels:
