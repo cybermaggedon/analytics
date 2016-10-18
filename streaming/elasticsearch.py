@@ -40,21 +40,20 @@ ttl = "14d"
 def init():
 
     mapping = {
-        "mappings": {
             es_object: {
                 "properties": {
                     "time": { "type": "date" },
                     "url": {
                         "type": "string",
-                        "index": "not analyzed"
+                        "index": "not_analyzed"
                     },
                     "queries": {
                         "type": "string",
-                        "index": "not analyzed"
+                        "index": "not_analyzed"
                     },
                     "action": {
                         "type": "string",
-                        "index": "not analyzed"
+                        "index": "not_analyzed"
                     },
                     "src": {
                         "type": "object",
@@ -100,14 +99,39 @@ def init():
                     }
                 }
             }
-        }
     }
+
+    u = "%s/%s" % (es_url, es_index)
+
+    while True:
+        try: 
+            r = requests.put(u)
+            if r.status_code != 201 and r.status_code != 200 and r.status_code != 400:
+                sys.stderr.write("Error sending to ElasticSearch\n")
+                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+            sys.stderr.write("Index create: %d\n" % r.status_code)
+            break
+        except Exception, e:
+            sys.stderr.write("Exception: %s\n" % str(e))
+            time.sleep(1)
+
+    u = "%s/%s/_mapping/%s" % (es_url, es_index, es_object)
+
+    while True:
+        try: 
+            r = requests.put(u, data=json.dumps(mapping),
+                             headers={"Content-Type": "application/json"})
+            if r.status_code != 201 and r.status_code != 200 and r.status_code != 400:
+                sys.stderr.write("Error sending to ElasticSearch\n")
+                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+            sys.stderr.write("Mapping put: %d\n" % r.status_code)
+            break
+        except Exception, e:
+            sys.stderr.write("Exception: %s\n" % str(e))
+            time.sleep(1)
 
 
 def output(obs, id):
-    obs = {
-        es_object: obs
-        }
 
     u = "%s/%s/%s/%s?ttl=%s" % (es_url, es_index, es_object, id, ttl)
 
