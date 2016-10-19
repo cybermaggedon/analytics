@@ -212,10 +212,10 @@ spec:
         image: cybermaggedon/wildfly-gaffer:0.4.4
         resources:
           requests:
-            memory: "128M"
+            memory: "700M"
             cpu: "0.1"
           limits:
-            memory: "128M"
+            memory: "700M"
             cpu: "0.1"
         ports:
         - containerPort: 8080
