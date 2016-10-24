@@ -151,7 +151,7 @@ jobid = job["jobReference"]
 
 # Not very helpful response.
 if job.has_key("errors") and len(job["errors"]) != 0:
-    sys.stderr.write("There were errors\n")
+    sys.stderr.write("trust_score: There were errors\n")
     sys.exit(1)
 
 # If Job is complete...
@@ -162,7 +162,7 @@ if job["jobComplete"]:
 else:
 
     # ...loop until we have results...
-    sys.stderr.write("Waiting...\n")
+    sys.stderr.write("trust_score: Waiting...\n")
 
     while True:
 
@@ -180,10 +180,10 @@ else:
             break
 
         # Job not complete, loop round.
-        sys.stderr.write("Waiting...\n")
+        sys.stderr.write("trust_score: Waiting...\n")
 
 if rows == None:
-    sys.stderr.write("Failed to get rows.\n")
+    sys.stderr.write("trust_score: Failed to get rows.\n")
     sys.exit(1)
 
 fingerprints={}

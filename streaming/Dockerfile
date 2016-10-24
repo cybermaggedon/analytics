@@ -18,5 +18,6 @@ COPY run.sh /wye/
 COPY publisher.py /wye/
 COPY hadoop.py /wye/
 COPY googlestorage.py /wye/
+COPY uri_class.py /wye/
 COPY cyber.py /wye/
 CMD /wye/run.sh

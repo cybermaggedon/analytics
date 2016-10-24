@@ -48,7 +48,7 @@ while True:
         msg = skt.recv()
         server.send(msg)
     except Exception, e:
-        sys.stderr.write("elasticsearch: Exception: %s\n" % str(e))
+        sys.stderr.write("publisher: Exception: %s\n" % str(e))
 	sys.stderr.flush()
         time.sleep(0.1)
 

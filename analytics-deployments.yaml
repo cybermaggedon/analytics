@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: gcr.io/trust-networks/analytics:0.49
+        image: gcr.io/trust-networks/analytics:0.58
         livenessProbe:
           exec:
             command:
@@ -52,6 +52,8 @@ spec:
           value: activity
         - name: TRUST_TABLE
           value: fingerprint
+        - name: URI_TABLE
+          value: uri_classification
         - name: CASSANDRA_KEYSPACE
           value: rdf
         - name: CASSANDRA_CONTACTS

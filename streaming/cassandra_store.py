@@ -191,7 +191,7 @@ def output(obs):
                 ])
                 break
             except Exception, e:
-                sys.stderr.write("Exception: %s\n" % str(e))
+                sys.stderr.write("cassandra_store: Exception: %s\n" % str(e))
                 time.sleep(0.1)
 
                 # FIXME: Ignore errors for now.
@@ -387,10 +387,10 @@ while True:
         session = cluster.connect()
         break
     except:
-        sys.stderr.write("Could not connect to Cassandra, retry...\n")
+        sys.stderr.write("cassandra_store: Could not connect, retry...\n")
         time.sleep(5)
 
-sys.stderr.write("Connected to Cassandra.\n")
+sys.stderr.write("cassandra_store: Connected to Cassandra.\n")
 
 try:
     session.execute("""

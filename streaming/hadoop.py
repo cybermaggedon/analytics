@@ -38,7 +38,7 @@ client = hdfs.client.InsecureClient(url, user=user)
 try:
     client.makedirs(basedir)
 except Exception, e:
-    sys.stderr.write("Directory %s creation failed (ignored): %s\n" %
+    sys.stderr.write("hadoop: Directory %s creation failed (ignored): %s\n" %
                      (basedir, e))
     sys.stderr.flush()
 

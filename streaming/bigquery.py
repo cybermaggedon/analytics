@@ -97,7 +97,7 @@ except googleapiclient.errors.HttpError:
     found=False
 
 if found:
-    sys.stderr.write("Table %s exists.\n" % table)
+    sys.stderr.write("bigquery: Table %s exists.\n" % table)
 else:
 
     body = {

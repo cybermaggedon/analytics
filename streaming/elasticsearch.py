@@ -107,12 +107,12 @@ def init():
         try: 
             r = requests.put(u)
             if r.status_code != 201 and r.status_code != 200 and r.status_code != 400:
-                sys.stderr.write("Error sending to ElasticSearch\n")
-                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
-            sys.stderr.write("Index create: %d\n" % r.status_code)
+                sys.stderr.write("elasticsearch: Error sending.\n")
+                sys.stderr.write("elasticsearch: HTTP code: " + str(r.status_code) + "\n")
+            sys.stderr.write("elasticsearch: Index create: %d\n" % r.status_code)
             break
         except Exception, e:
-            sys.stderr.write("Exception: %s\n" % str(e))
+            sys.stderr.write("elasticsearch: Exception: %s\n" % str(e))
             time.sleep(1)
 
     u = "%s/%s/_mapping/%s" % (es_url, es_index, es_object)
@@ -122,12 +122,12 @@ def init():
             r = requests.put(u, data=json.dumps(mapping),
                              headers={"Content-Type": "application/json"})
             if r.status_code != 201 and r.status_code != 200 and r.status_code != 400:
-                sys.stderr.write("Error sending to ElasticSearch\n")
-                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
-            sys.stderr.write("Mapping put: %d\n" % r.status_code)
+                sys.stderr.write("elasticsearch: Error sending to ElasticSearch\n")
+                sys.stderr.write("elasticsearch: HTTP code: " + str(r.status_code) + "\n")
+            sys.stderr.write("elasticsearch: Mapping put: %d\n" % r.status_code)
             break
         except Exception, e:
-            sys.stderr.write("Exception: %s\n" % str(e))
+            sys.stderr.write("elasticsearch: Exception: %s\n" % str(e))
             time.sleep(1)
 
 
@@ -140,11 +140,11 @@ def output(obs, id):
             r = requests.put(u, data=json.dumps(obs),
                              headers={"Content-Type": "application/json"})
             if r.status_code != 201 and r.status_code != 200:
-                sys.stderr.write("Error sending to ElasticSearch\n")
-                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+                sys.stderr.write("elasticsearch: Error sending to ElasticSearch\n")
+                sys.stderr.write("elasticsearch: HTTP code: " + str(r.status_code) + "\n")
             break
         except Exception, e:
-            sys.stderr.write("Exception: %s\n" % str(e))
+            sys.stderr.write("elasticsearch: Exception: %s\n" % str(e))
             time.sleep(1)
 
 ############################################################################

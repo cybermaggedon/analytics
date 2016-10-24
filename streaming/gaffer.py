@@ -229,9 +229,9 @@ def output(obs):
             # Ignore a valid HTTP response.  Errors are probably bugs in my
             # code.
             if r.status_code != 204:
-                sys.stderr.write("Error sending to %s/graph/doOperation/add/elements\n" %
+                sys.stderr.write("gaffer: Error sending to %s/graph/doOperation/add/elements\n" %
                                  gaffer)
-                sys.stderr.write("HTTP code: " + str(r.status_code) + "\n")
+                sys.stderr.write("gaffer: HTTP code: " + str(r.status_code) + "\n")
             break
         except Exception, e:
             # Keep retrying for transport errors
