@@ -148,8 +148,9 @@ def handle(msg):
             r = requests.get(u)
             if r.status_code != 200:
                 sys.stderr.write("uri_class: Error calling host classifier\n")
+                sys.stderr.write("uri_class: %s\n" % u)
                 sys.stderr.write("uri_class: HTTP code: " + str(r.status_code) + "\n")
-                continue
+                break
             classif = r.json()["result"]
             break
         except Exception, e:
