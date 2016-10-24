@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
       - name: cassandra
-        image: cassandra:3.7
+        image: cassandra:3.9
         resources:
           requests:
             memory: "4096M"
@@ -138,7 +138,7 @@ spec:
     spec:
       containers:
       - name: elasticsearch
-        image: elasticsearch:2.3.5
+        image: elasticsearch:2.4.1
         resources:
           requests:
             memory: "2048M"
@@ -232,7 +232,7 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: kibana:4.5.4
+        image: kibana:4.6.2
         resources:
           requests:
             memory: "1024M"
