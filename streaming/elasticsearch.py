@@ -55,6 +55,10 @@ def init():
                         "type": "string",
                         "index": "not_analyzed"
                     },
+                    "device": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    },
                     "src": {
                         "type": "object",
                         "properties": {
