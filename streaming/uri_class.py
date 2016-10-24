@@ -160,7 +160,7 @@ def handle(msg):
     # Store in BigQuery
     obj = {
         "device": device,
-        "id": device,
+        "id": id,
         "host": host,
         "time": tm,
         "uri": uri,
