@@ -217,5 +217,6 @@ kubectl delete -f analytics-services.yaml
 kubectl delete -f analytics-deployments.yaml
 
 gcloud compute --project "trust-networks" disks delete --zone "us-east1-b" \
-       gaffer-0000  elasticsearch-0000 cassandra-0000 ca-0000 vpn-ca-data-0000
+       gaffer-hadoop-0000 gaffer-accumulo-0000 gaffer-zookeeper-0000 \
+       elasticsearch-0000 cassandra-0000 ca-0000 vpn-ca-data-0000
 

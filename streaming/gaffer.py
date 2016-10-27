@@ -28,18 +28,9 @@ ctrl.flush()
 
 ############################################################################
 
-gaffer = os.getenv("GAFFER_URL", "http://gaffer:8080/example-rest/v1")
+gaffer = os.getenv("GAFFER_URL", "http://gaffer:8080/rest/v1")
 
 ############################################################################
-
-cybobj = "http://cyberprobe.sf.net/obj/"
-cybprop = "http://cyberprobe.sf.net/prop/"
-cybtype = "http://cyberprobe.sf.net/type/"
-rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-rdfs = "http://www.w3.org/2000/01/rdf-schema#"
-
-rdftype = rdf + "type"
-rdfslabel = rdfs + "label"
 
 session = requests.session()
 
@@ -48,17 +39,30 @@ session = requests.session()
 def add_edge(edges, group, s, d):
     edges.append((group, s, d))
 
+def add_vertex(vertices, group, v):
+    vertices.append((group, v))
+
 ############################################################################
 
 def init():
     pass
 
-def output(obs):
+def output(vertices, edges):
 
-    edges = {}
-    edges["elements"] = []
+    body = {}
+    body["elements"] = []
 
-    for v in obs:
+    for v in vertices:
+
+        elt = {}
+        elt["class"] = "gaffer.data.element.Entity"
+        elt["group"] = v[0]
+        elt["vertex"] = v[1]
+        elt["properties"] = { "count": 1 }
+
+        body["elements"].append(elt)
+
+    for v in edges:
 
         elt = {}
         elt["directed"] = True
@@ -68,20 +72,20 @@ def output(obs):
         elt["destination"] = v[2]
         elt["properties"] = { "count": 1 }
 
-        edges["elements"].append(elt)
+        body["elements"].append(elt)
 
     while True:
         try:
-            r = requests.put(gaffer + "/graph/doOperation/add/elements",
-                             data=json.dumps(edges),
+            url = gaffer + "/graph/doOperation/add/elements"
+            r = requests.put(url,
+                             data=json.dumps(body),
                              headers={"Content-Type": "application/json"})
 
             # Ignore a valid HTTP response.  Errors are probably bugs in my
             # code.
             if r.status_code != 204:
-                sys.stderr.write("gaffer: Error sending to %s/graph/doOperation/add/elements\n" %
-                                 gaffer)
-                sys.stderr.write("gaffer: HTTP code: " + str(r.status_code) + "\n")
+                sys.stderr.write("gaffer: Error sending to Gaffer\n")
+                sys.stderr.write("gaffer: HTTP code: %s\n" % str(r.status_code))
             break
         except Exception, e:
             # Keep retrying for transport errors
@@ -99,6 +103,7 @@ def handle(msg):
     if msg["action"] == "connected_down":
         return
 
+    vertices = []
     edges = []
 
     sip = None
@@ -153,23 +158,32 @@ def handle(msg):
        proto == "tcp":
         src = sip + ":" + sport
         dest = dip + ":" + dport
-        add_edge(edges, "tcpflow", src, dest)
+        add_vertex(vertices, "ip", sip)
+        add_vertex(vertices, "ip", dip)
+        add_edge(edges, "ip_flow", sip, dip)
+        add_vertex(vertices, "tcp", src)
+        add_vertex(vertices, "tcp", dest)
+        add_edge(edges, "tcp_flow", src, dest)
+
+        if msg.has_key("url") and msg["action"] == "http_request":
+            add_edge(edges, "http_request", src, msg["url"])
 
     if sip != None and sport != None and dip != None and dport != None and \
-       proto == "tcp":
+       proto == "udp":
         src = sip + ":" + sport
         dest = dip + ":" + dport
-        add_edge(edges, "udpflow", src, dest)
+        add_vertex(vertices, "ip", sip)
+        add_vertex(vertices, "ip", dip)
+        add_edge(edges, "ip_flow", sip, dip)
+        add_vertex(vertices, "udp", src)
+        add_vertex(vertices, "udp", dest)
+        add_edge(edges, "udp_flow", src, dest)
 
-    device = msg["device"]
-    if msg.has_key("url") and msg["action"] == "http_request":
-        add_edge(edges, "http_request", device, msg["url"])
+        if msg.has_key("queries") and msg["action"] == "dns_message":
+            for v in msg["queries"]:
+                add_edge(edges, "dns_request", src, v)
 
-    if msg.has_key("queries") and msg["action"] == "dns_message":
-        for v in msg["queries"]:
-            add_edge(edges, "dns_request", device, v)
-
-    output(edges)
+    output(vertices, edges)
 
 ############################################################################
 
