@@ -31,7 +31,8 @@ recv = job.define_python_worker("receiver", "receiver.py")
 recv.connect("output",
              [(webact, "input"), (dnsact, "input"), (fp, "input"),
               (bq, "input"), (es, "input"), (cassandra, "input"),
-              (gs, "input"), (publisher, "input"), (uric, "input")])
+              (gs, "input"), (publisher, "input"), (uric, "input"),
+	      (gaffer, "input")])
 
 job_id = job.implement()
 

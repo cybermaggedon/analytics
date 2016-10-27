@@ -165,7 +165,7 @@ def handle(msg):
     if msg.has_key("url") and msg["action"] == "http_request":
         add_edge(edges, "http_request", device, msg["url"])
 
-    if msg.has_key("queries") and msg["action"] == "dns":
+    if msg.has_key("queries") and msg["action"] == "dns_message":
         for v in msg["queries"]:
             add_edge(edges, "dns_request", device, v)
 
