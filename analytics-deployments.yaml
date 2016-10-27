@@ -65,7 +65,7 @@ spec:
         - name: ELASTICSEARCH_URL
           value: http://elasticsearch:9200
         - name: GAFFER_URL
-          value: http://gaffer:8080/example-rest/v1
+          value: http://gaffer:8080/rest/v1
         - name: HDFS_URL
           value: http://hadoop-m:50070/
         ports:
@@ -209,7 +209,7 @@ spec:
           - mountPath: /accumulo
             name: accumulo
       - name: gaffer
-        image: cybermaggedon/wildfly-gaffer:0.4.4
+        image: gcr.io/trust-networks/gaffer:0.0.1
         resources:
           requests:
             memory: "700M"
