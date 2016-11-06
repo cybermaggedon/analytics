@@ -1,9 +1,9 @@
 
-VERSION=0.20
+VERSION=0.24
 
 container:
 	docker build -t gcr.io/trust-networks/web:${VERSION} .
 
 push:
-	gcloud docker push gcr.io/trust-networks/web:${VERSION}
+	gcloud docker -- push gcr.io/trust-networks/web:${VERSION}
 

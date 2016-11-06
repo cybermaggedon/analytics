@@ -42,7 +42,6 @@ spec:
     protocol: TCP
   selector:
     app: analytics
-  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service

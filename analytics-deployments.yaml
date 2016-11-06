@@ -141,7 +141,7 @@ spec:
         image: elasticsearch:5.0.0
         resources:
           requests:
-            memory: "2048M"
+            memory: "4096M"
             cpu: "1.0"
           limits:
             memory: "4096M"
@@ -337,7 +337,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.20
+        image: gcr.io/trust-networks/web:0.24
         resources:
           requests:
             memory: "64M"
