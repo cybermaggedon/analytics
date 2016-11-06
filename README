@@ -162,17 +162,21 @@ gcloud compute --project "trust-networks" disks create "ca-0000" \
 gcloud compute --project "trust-networks" disks create "vpn-ca-data-0000" \
   --size "1" --zone "us-east1-b" --type "pd-standard"
 
-# 25 GB disk for Gaffer Hadoop
-gcloud compute --project "trust-networks" disks create "gaffer-hadoop-0000" \
-  --size "25" --zone "us-east1-b" --type "pd-standard"
+# 50 GB disk for Gaffer Hadoop
+gcloud compute --project "trust-networks" disks create "hadoop-0000" \
+  --size "50" --zone "us-east1-b" --type "pd-standard"
 
 # 10 GB disk for Gaffer Zookeeper
-gcloud compute --project "trust-networks" disks create "gaffer-zookeeper-0000" \
+gcloud compute --project "trust-networks" disks create "zookeeper-1" \
   --size "10" --zone "us-east1-b" --type "pd-standard"
 
-# 1 GB disk for Gaffer Accumulo
-gcloud compute --project "trust-networks" disks create "gaffer-accumulo-0000" \
-  --size "1" --zone "us-east1-b" --type "pd-standard"
+# 10 GB disk for Gaffer Zookeeper
+gcloud compute --project "trust-networks" disks create "zookeeper-2" \
+  --size "10" --zone "us-east1-b" --type "pd-standard"
+
+# 10 GB disk for Gaffer Zookeeper
+gcloud compute --project "trust-networks" disks create "zookeeper-3" \
+  --size "10" --zone "us-east1-b" --type "pd-standard"
 
 gcloud container clusters get-credentials analytics \
   --zone us-east1-b --project trust-networks
