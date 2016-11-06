@@ -138,7 +138,7 @@ spec:
     spec:
       containers:
       - name: elasticsearch
-        image: elasticsearch:2.4.1
+        image: elasticsearch:5.0.0
         resources:
           requests:
             memory: "2048M"
@@ -154,6 +154,14 @@ spec:
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: elasticsearch-data
+      - name: sysctl-sidecar
+        image: alpine
+        securityContext:
+          privileged: true
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - sysctl -w vm.max_map_count=524288 && while true; do sleep 1000000; done
       volumes:
       - name: elasticsearch-data
         gcePersistentDisk:
@@ -273,7 +281,7 @@ spec:
     spec:
       containers:
       - name: kibana
-        image: kibana:4.6.2
+        image: kibana:5.0.0
         resources:
           requests:
             memory: "1024M"

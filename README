@@ -150,9 +150,9 @@ gcloud container --project "trust-networks" clusters create "analytics" \
 gcloud compute --project "trust-networks" disks create "cassandra-0000" \
   --size "25" --zone "us-east1-b" --type "pd-standard"
 
-# 25 GB disk for ES
+# 50 GB disk for ES
 gcloud compute --project "trust-networks" disks create "elasticsearch-0000" \
-  --size "25" --zone "us-east1-b" --type "pd-standard"
+  --size "50" --zone "us-east1-b" --type "pd-standard"
 
 # 1 GB disk for CA
 gcloud compute --project "trust-networks" disks create "ca-0000" \
