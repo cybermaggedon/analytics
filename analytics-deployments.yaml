@@ -266,7 +266,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.26
+        image: gcr.io/trust-networks/web:0.28
         resources:
           requests:
             memory: "64M"
