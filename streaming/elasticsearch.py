@@ -33,76 +33,58 @@ if len(sys.argv) < 2:
 else:
     es_url = sys.argv[1]
 
-ttl = "14d"
+ttl = "28d"
 
 ############################################################################
 
 def init():
 
     mapping = {
-            es_object: {
-                "properties": {
-                    "time": { "type": "date" },
-                    "url": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "queries": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "action": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "device": {
-                        "type": "string",
-                        "index": "not_analyzed"
-                    },
-                    "src": {
-                        "type": "object",
-                        "properties": {
-                            "ipv4": { "type": "ip" }
+        es_object: {
+            "properties": {
+                "id": { "type": "keyword" },
+                "time": { "type": "date" },
+                "url": { "type": "keyword" },
+                "queries": { "type": "keyword" },
+                "action": { "type": "keyword" },
+                "device": { "type": "keyword" },
+                "type": {"type": "keyword" },
+                "method": {"type": "keyword" },
+                "src": {
+                    "properties": {
+                        "ipv4": { "type": "ip" },
+                        "tcp": { "type": "integer"},
+                        "udp": { "type": "integer"}
+                    }
+                },
+                "dest": {
+                    "properties": {
+                        "ipv4": { "type": "ip" },
+                        "tcp": { "type": "integer"},
+                        "udp": { "type": "integer"}
+                    }
+                },
+                "answers": {
+                    "properties": {
+                        "name": {
+                            "type": "keyword"
+                        },
+                        "address": {
+                            "type": "keyword"
                         }
-                    },
-                    "dest": {
-                        "type": "object",
-                        "properties": {
-                            "ipv4": { "type": "ip" }
-                        }
-                    },
-                    "answers": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            }
-                        }
-                    },
-                    "header": {
-                        "type": "object",
-                        "properties": {
-                            "User-Agent": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "Host": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "Content-Type": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            },
-                            "Server": {
-                                "type": "string",
-                                "index": "not_analyzed"
-                            }
-                        }
+                    }
+                },
+                "header": {
+                    "properties": {
+                        "User-Agent": { "type": "keyword" },
+                        "Host": { "type": "keyword" },
+                        "Content-Type": { "type": "keyword" },
+                        "Server": { "type": "keyword" },
+                        "Connection": { "type": "keyword" }
                     }
                 }
             }
+        }
     }
 
     u = "%s/%s" % (es_url, es_index)
