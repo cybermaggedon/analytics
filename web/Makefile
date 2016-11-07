@@ -1,5 +1,5 @@
 
-VERSION=0.24
+VERSION=0.26
 
 container:
 	docker build -t gcr.io/trust-networks/web:${VERSION} .

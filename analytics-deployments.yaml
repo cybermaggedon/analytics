@@ -207,6 +207,10 @@ spec:
       containers:
       - name: kibana
         image: kibana:5.0.0
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - "echo server.basePath: /kibana >> /etc/kibana/kibana.yml; /docker-entrypoint.sh kibana"
         resources:
           requests:
             memory: "1024M"
@@ -262,7 +266,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.24
+        image: gcr.io/trust-networks/web:0.26
         resources:
           requests:
             memory: "64M"
