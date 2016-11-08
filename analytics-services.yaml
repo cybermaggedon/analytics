@@ -122,10 +122,6 @@ metadata:
     app: web
 spec:
   ports:
-  - name: http
-    port: 80
-    targetPort: 80
-    protocol: TCP
   - name: https
     port: 443
     targetPort: 443
@@ -178,7 +174,6 @@ spec:
     protocol: TCP
   selector:
     app: wildfly
-  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service

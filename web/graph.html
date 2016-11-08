@@ -1,0 +1,540 @@
+<html>
+  <head>
+    <!-- START SIGMA IMPORTS -->
+    <script src="linkurious/src/sigma.core.js"></script>
+    <script src="linkurious/src/conrad.js"></script>
+    <script src="linkurious/src/utils/sigma.utils.js"></script>
+    <script src="linkurious/src/utils/sigma.polyfills.js"></script>
+    <script src="linkurious/src/sigma.settings.js"></script>
+    <script src="linkurious/src/classes/sigma.classes.dispatcher.js"></script>
+    <script src="linkurious/src/classes/sigma.classes.configurable.js"></script>
+    <script src="linkurious/src/classes/sigma.classes.graph.js"></script>
+    <script src="linkurious/src/classes/sigma.classes.camera.js"></script>
+    <script src="linkurious/src/classes/sigma.classes.quad.js"></script>
+    <script src="linkurious/src/captors/sigma.captors.mouse.js"></script>
+    <script src="linkurious/src/captors/sigma.captors.touch.js"></script>
+    <script src="linkurious/src/renderers/sigma.renderers.canvas.js"></script>
+    <script src="linkurious/src/renderers/sigma.renderers.webgl.js"></script>
+    <script src="linkurious/src/renderers/sigma.renderers.svg.js"></script>
+    <script src="linkurious/src/renderers/sigma.renderers.def.js"></script>
+    <script src="linkurious/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+    <script src="linkurious/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+    <script src="linkurious/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+    <script src="linkurious/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+    <script src="linkurious/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+    <script src="linkurious/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.utils.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.edges.def.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.edges.curvedArrow.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.labels.def.js"></script>
+    <script src="linkurious/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+    <script src="linkurious/src/middlewares/sigma.middlewares.rescale.js"></script>
+    <script src="linkurious/src/middlewares/sigma.middlewares.copy.js"></script>
+    <script src="linkurious/src/misc/sigma.misc.animation.js"></script>
+    <script src="linkurious/src/misc/sigma.misc.bindEvents.js"></script>
+    <script src="linkurious/src/misc/sigma.misc.bindDOMEvents.js"></script>
+    <script src="linkurious/src/misc/sigma.misc.drawHovers.js"></script>
+    <!-- END SIGMA IMPORTS -->
+    <script src="linkurious/plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
+    <script src="linkurious/plugins/sigma.plugins.animate/sigma.plugins.animate.js"></script>
+    <script src="linkurious/plugins/sigma.layouts.forceLink/worker.js"></script>
+    <script src="linkurious/plugins/sigma.layouts.forceLink/supervisor.js"></script>
+    <script src="linkurious/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+    <script src="linkurious/plugins/sigma.plugins.activeState/sigma.plugins.activeState.js"></script>
+    <script src="linkurious/plugins/sigma.plugins.select/sigma.plugins.select.js"></script>
+    <script src="linkurious/plugins/sigma.plugins.keyboard/sigma.plugins.keyboard.js"></script>
+
+    <style>
+	#graph-container {
+	  width: 98%;
+	  height: 60%;
+	  margin: 4px;
+	  padding: 10px;
+	  border: solid 1px black;
+	}
+	#output {
+	  width: 98%;
+	  border: solid 1px black;
+	  padding: 10px;
+	  margin: 4px;
+	}
+    </style>
+
+  </head>
+  <body>
+    
+    <div id="container">
+      <div id="graph-container">
+      </div>
+    </div>
+
+    <div>
+      <div>
+	Address: <input id="address" type="text"/>
+	<input id="query_ip_flows" type="submit" value="Find related IPs"/>
+	<input id="query_ip_ports" type="submit" value="Show ports observed"/>
+      </div>
+    </div>
+
+    <div id="output">
+    </div>
+  </body>
+  <script language="javascript">
+
+    var nodes = {};
+    var edges = {};
+
+    var g = {
+      nodes: [],
+      edges: []
+    };
+
+    var base = "/gaffer/rest/v1/";
+
+    s = new sigma({
+      graph: g,
+      renderer: {
+	container: document.getElementById('graph-container'),
+	type: 'canvas'
+      },
+      settings: {
+	doubleClickEnabled: false,
+	minEdgeSize: 0.5,
+	maxEdgeSize: 4,
+        dragNodeStickiness: 0.01,
+        nodeBorderSize: 2,
+        defaultNodeBorderColor: '#000',
+        edgeHoverHighlightNodes: 'circle',
+	enableEdgeHovering: true,
+	edgeHoverColor: 'edge',
+	defaultEdgeHoverColor: '#000',
+	edgeHoverSizeRatio: 1,
+	edgeHoverExtremities: true,
+	animationsTime: 2000,
+	labelThreshold: 20
+      }
+    });
+
+// 192.168.255.10 10.200.0.2 10.201.0.2 172.31.3.75 172.31.9.101 71.6.216.52
+
+    // Instanciate the ActiveState plugin:
+    var activeState = sigma.plugins.activeState(s);
+
+    // Initialize the dragNodes plugin:
+    var dragListener = sigma.plugins.dragNodes(s, s.renderers[0], activeState);
+
+    // Initialize the Select plugin:
+    var select = sigma.plugins.select(s, activeState);
+
+    // Initialize the Keyboard plugin:
+    var keyboard = sigma.plugins.keyboard(s, s.renderers[0]);
+
+    // Bind the Keyboard plugin to the Select plugin:
+    select.bindKeyboard(keyboard);
+
+    function delete_children(elt) {
+        var elt = document.getElementById(elt);
+        while (elt.firstChild) {
+	    elt.removeChild(elt.firstChild);
+        }
+    }
+
+    function create_ip_link(elt, ip) {
+        var a = document.createElement("a");
+	var output = document.getElementById(elt);
+	a.href = "#";
+	a.onclick = function() {
+	    document.getElementById("address").value = ip;
+	}
+	a.appendChild(document.createTextNode(ip));
+	output.appendChild(a);
+	output.appendChild(document.createTextNode(" "));
+    }
+
+    function create_tcp_link(elt, tcp) {
+        var a = document.createElement("a");
+	var output = document.getElementById(elt);
+	a.href = "#";
+	a.onclick = function() {
+	    query_port_flows(tcp, "tcp");
+	}
+	a.appendChild(document.createTextNode(tcp));
+	output.appendChild(a);
+	output.appendChild(document.createTextNode(" "));
+    }
+
+    function create_udp_link(elt, udp) {
+        var a = document.createElement("a");
+	var output = document.getElementById(elt);
+	a.href = "#";
+	a.onclick = function() {
+	    query_port_flows(udp, "udp");
+	}
+	a.appendChild(document.createTextNode(udp));
+	output.appendChild(a);
+	output.appendChild(document.createTextNode(" "));
+    }
+
+    function create_flow_link(elt, ip, text) {
+        var a = document.createElement("a");
+	var output = document.getElementById(elt);
+	a.href = "#";
+	a.onclick = function() {
+	    document.getElementById("address").value = ip;
+	}
+	a.appendChild(document.createTextNode(text));
+	output.appendChild(a);
+	output.appendChild(document.createTextNode(" "));
+    }
+
+    function handle_ip_ports_response(e) {
+
+        delete_children("output");
+
+        for (v in e) {
+	    var obj = e[v];
+	    if (obj["group"] == "tcp") {
+                create_tcp_link("output", obj["vertex"]);
+	    }
+	    if (obj["group"] == "udp") {
+                create_udp_link("output", obj["vertex"]);
+	    }
+	}
+
+    }
+
+    function handle_port_flows_response(e) {
+
+        delete_children("output");
+
+        for (v in e) {
+            var obj = e[v];
+
+	    if (obj["group"] == "tcp_flow") {
+	        create_flow_link("output",
+			obj["destination"].split(":")[0],
+			"TCP: " + obj["source"] + "-" + obj["destination"]);
+	    }
+
+	    if (obj["group"] == "udp_flow") {
+	        create_flow_link("output",
+			obj["destination"].split(":")[0],
+			"UDP: " + obj["source"] + "-" + obj["destination"]);
+	    }
+
+	}
+
+    }
+
+    function handle_ip_flows_response(e) {
+
+        delete_children("output");
+
+        for (v in e) {
+            var obj = e[v];
+
+            var seen = {}
+
+	    if (obj["group"] == "ip") {
+	        maybe_create_ip_node(obj["vertex"]);
+		seen[obj["vertex"]] = true;
+	    }
+
+	    if (obj["group"] == "ip_flow") {
+	        var src = obj["source"];
+	        var dest = obj["destination"];
+		seen[src] = true;
+		seen[dest] = true;
+	        maybe_create_ip_node(src);
+	        maybe_create_ip_node(dest);
+	        maybe_create_ipflow_edge(src, dest);
+	    }
+
+	}
+
+	for (var sn in seen) {
+          create_ip_link("output", sn);
+	}
+
+
+        s.refresh();
+        sigma.layouts.startForceLink();
+
+    }
+
+    function maybe_create_node(ip, color, sz) {
+	if (nodes[ip] == undefined) {
+	  var node = {
+	      "label": ip,
+	      "id": ip,
+	      "x": Math.random() * 10,
+	      "y": Math.random() * 10,
+	      "color": color,
+	      "size": sz
+	  }
+	  nodes[ip] = 1;
+	  s.graph.addNode(node);
+	}
+    }
+
+    function maybe_create_ip_node(ip) { maybe_create_node(ip, "blue", 2.0); }
+    function maybe_create_tcp_node(ip) { maybe_create_node(ip, "red", 1.0); }
+    function maybe_create_udp_node(ip) { maybe_create_node(ip, "orange", 1.0); }
+
+    function maybe_create_edge(src, dest, col) {
+        var id = src + "-" + dest;
+ 	if (edges[id] == undefined) {
+	    edges[id] = 1;
+	    var edge = { "source": src, "target": dest, "id": id,
+	    	"color": col};
+	    s.graph.addEdge(edge);
+	}
+    }
+
+    function maybe_create_ipflow_edge(src, dest) {
+        maybe_create_edge(src, dest, "red");
+    }
+
+    function query_ip_flows() {
+
+        delete_children("output");
+
+	req = new XMLHttpRequest();
+
+	var seed = document.getElementById("address").value;
+
+	var query = {
+	  "resultLimit": 300,
+	  "deduplicate": true,
+	  "seeds": [
+	    {
+	      "class": "gaffer.operation.data.EntitySeed",
+	      "vertex": seed
+	    }
+	  ],
+	  "view": {
+	    "entities": {
+	      "ip": {
+		"groupBy": []
+	      }
+	    },
+	    "edges": {
+	      "ip_flow": {
+		"groupBy": []
+	      }
+	    }
+	  },
+	  "includeEntities": true,
+	  "populateProperties": true,
+	  "includeEdges": "ALL",
+	  "includeIncomingOutGoing": "BOTH"
+	}
+
+	query = JSON.stringify(query);
+
+	req.open("POST", base + "graph/doOperation/get/elements/related", true);
+	req.onload = function(e) {
+	    if (req.readyState === 4) {
+		if (req.status === 200) {
+		    handle_ip_flows_response(JSON.parse(req.responseText));
+		}
+	    }
+	}
+
+	req.setRequestHeader("Content-Type", "application/json");
+	req.send(query)
+
+    }
+
+    function query_port_flows(address, proto) {
+
+        delete_children("output");
+
+	req = new XMLHttpRequest();
+
+	var seed = document.getElementById("address").value;
+
+        var query;
+
+        if (proto == "tcp")
+	    query = {
+	      "resultLimit": 300,
+	      "deduplicate": true,
+	      "seeds": [
+		{
+		  "class": "gaffer.operation.data.EntitySeed",
+		  "vertex": address
+		}
+	      ],
+	      "view": {
+		"entities": {
+		  "tcp": {
+		    "groupBy": []
+		  }
+		},
+		"edges": {
+		  "tcp_flow": {
+		    "groupBy": []
+		  }
+		}
+	      },
+	      "includeEntities": true,
+	      "populateProperties": true,
+	      "includeEdges": "ALL",
+	      "includeIncomingOutGoing": "BOTH"
+  	    };
+	else
+	    query = {
+	      "resultLimit": 300,
+	      "deduplicate": true,
+	      "seeds": [
+		{
+		  "class": "gaffer.operation.data.EntitySeed",
+		  "vertex": address
+		}
+	      ],
+	      "view": {
+		"entities": {
+		  "udp": {
+		    "groupBy": []
+		  }
+		},
+		"edges": {
+		  "udp_flow": {
+		    "groupBy": []
+		  }
+		}
+	      },
+	      "includeEntities": true,
+	      "populateProperties": true,
+	      "includeEdges": "ALL",
+	      "includeIncomingOutGoing": "BOTH"
+  	    };
+
+	query = JSON.stringify(query);
+
+	req.open("POST", base + "graph/doOperation/get/elements/related", true);
+	req.onload = function(e) {
+	    if (req.readyState === 4) {
+		if (req.status === 200) {
+		    handle_port_flows_response(JSON.parse(req.responseText));
+		}
+	    }
+	}
+
+	req.setRequestHeader("Content-Type", "application/json");
+	req.send(query)
+
+    }
+
+    function query_ip_ports() {
+
+        delete_children("output");
+
+	req = new XMLHttpRequest();
+
+	var seed = document.getElementById("address").value;
+
+	var query = {
+	    "operations": [
+		{
+		    "class": "gaffer.accumulostore.operation.impl.GetEntitiesInRanges",
+		    "seeds": [
+			{
+			    "class": "gaffer.accumulostore.utils.Pair",
+  			    "first": {
+				    "gaffer.operation.data.EntitySeed": {
+					"vertex": (seed + ":")
+				    }
+				},
+				"second": {
+				    "gaffer.operation.data.EntitySeed": {
+					"vertex": (seed + ";")
+				    }
+				}
+			    }
+		    ]
+		}
+	    ]
+	}
+
+	query = JSON.stringify(query);
+
+	req.open("POST", base + "graph/doOperation", true);
+	req.onload = function(e) {
+	    if (req.readyState === 4) {
+		if (req.status === 200) {
+		    handle_ip_ports_response(JSON.parse(req.responseText));
+		}
+	    }
+	}
+
+	req.setRequestHeader("Content-Type", "application/json");
+	req.send(query)
+
+    }
+
+    document.getElementById("query_ip_flows").onclick = query_ip_flows;
+    document.getElementById("query_ip_ports").onclick = query_ip_ports;
+
+    document.getElementById("address").value = "107.178.254.65";
+
+// Bind the events:
+s.bind('clickNode doubleClickNode rightClickNode', function(e) {
+  console.log(e.type, e.data.node.label, e.data.captor);
+  document.getElementById("address").value = e.data.node.id;
+});
+s.bind('clickEdge doubleClickEdge rightClickEdge', function(e) {
+  console.log(e.type, e.data.edge, e.data.captor);
+});
+s.bind('clickStage doubleClickStage rightClickStage', function(e) {
+  console.log(e.type, e.data.captor);
+});
+s.bind('hovers', function(e) {
+  console.log(e.type, e.data.captor, e.data);
+});
+
+dragListener.bind('startdrag', function(event) {
+  console.log(event);
+});
+dragListener.bind('drag', function(event) {
+  console.log(event);
+});
+dragListener.bind('drop', function(event) {
+  console.log(event);
+});
+dragListener.bind('dragend', function(event) {
+  console.log(event);
+});
+
+// Configure the ForceLink algorithm:
+var fa = sigma.layouts.configForceLink(s, {
+  worker: true,
+  autoStop: true,
+  background: true,
+  easing: 'cubicInOut'
+});
+
+// Bind the events:
+fa.bind('start stop', function(e) {
+//  console.log(e.type);
+});
+
+// Start the ForceLink algorithm:
+sigma.layouts.startForceLink();
+
+  </script>
+</html>

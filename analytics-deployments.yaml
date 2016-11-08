@@ -237,7 +237,7 @@ spec:
     spec:
       containers:
       - name: sparql
-        image: cybermaggedon/sparql-cassandra:0.03
+        image: cybermaggedon/sparql-cassandra:0.04a
         command:
         - "sparql"
         - "8081"
@@ -266,7 +266,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: gcr.io/trust-networks/web:0.28
+        image: gcr.io/trust-networks/web:0.37
         resources:
           requests:
             memory: "64M"
@@ -276,6 +276,9 @@ spec:
             cpu: "0.5"
         ports:
         - containerPort: 443
+          name: https
+        - containerPort: 8099
+          name: http
         volumeMounts:
         - mountPath: /cert
           name: web-cert
