@@ -89,7 +89,8 @@
 	<input id="query_ip_ports" type="submit" value="Show ports observed"/>
       </div>
       <div>Min degree:
-	<span id="min-degree-val">0</span>
+	0
+	<input id="min-degree-val" type="input" size="6" value="0">
 	<input id="min-degree" type="range" min="0" max="0" value="0">
 	<span id="max-degree-val">0</span>
       </div>
@@ -138,10 +139,27 @@
     var filter = sigma.plugins.filter(s);
 
     // Min degree updater
-    function apply_min_degree(e) {
+    function min_range_changed(e) {
 
       var v = e.target.value;
-      document.getElementById("min-degree-val").textContent = v;
+      document.getElementById("min-degree-val").value = v;
+
+      apply_min(v);
+
+    }
+
+    // Min degree updater
+    function min_input_changed(e) {
+
+      var v = e.target.value;
+      document.getElementById("min-degree").value = v;
+
+      apply_min(v);
+
+    }  
+
+    // Min degree updater
+    function apply_min(v) {
 
       filter.undo('min-degree');
       filter.nodesBy(
@@ -154,8 +172,8 @@
         'min-degree'
       );
       filter.apply();
-  }
-
+    }
+    
 // 192.168.255.10 10.200.0.2 10.201.0.2 172.31.3.75 172.31.9.101 71.6.216.52
 
     // Instanciate the ActiveState plugin:
@@ -547,7 +565,8 @@ dragListener.bind('dragend', function(event) {
     });
 
 // FIXME: Doesn't work on IE?
-document.getElementById("min-degree").addEventListener("input", apply_min_degree);
+document.getElementById("min-degree").addEventListener("input", min_range_changed);
+document.getElementById("min-degree-val").addEventListener("input", min_input_changed);
 
 // Configure the ForceLink algorithm:
 var fa = sigma.layouts.configForceLink(s, {
