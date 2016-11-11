@@ -356,7 +356,7 @@ kind: Deployment
 metadata:
   name: vpn-server
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
