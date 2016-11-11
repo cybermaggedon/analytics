@@ -56,6 +56,7 @@
     <script src="linkurious/plugins/sigma.plugins.activeState/sigma.plugins.activeState.js"></script>
     <script src="linkurious/plugins/sigma.plugins.select/sigma.plugins.select.js"></script>
     <script src="linkurious/plugins/sigma.plugins.keyboard/sigma.plugins.keyboard.js"></script>
+    <script src="linkurious/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
 
     <style>
 	#graph-container {
@@ -87,6 +88,11 @@
 	<input id="query_ip_flows" type="submit" value="Find related IPs"/>
 	<input id="query_ip_ports" type="submit" value="Show ports observed"/>
       </div>
+      <div>Min degree:
+	<span id="min-degree-val">0</span>
+	<input id="min-degree" type="range" min="0" max="0" value="0">
+	<span id="max-degree-val">0</span>
+      </div>
     </div>
 
     <div id="output">
@@ -102,7 +108,8 @@
       edges: []
     };
 
-    var base = "/gaffer/rest/v1/";
+//    var base = "gaffer/rest/v1/";
+    var base = "http://10.27.246.171:8080/rest/v1/";
 
     s = new sigma({
       graph: g,
@@ -127,6 +134,28 @@
 	labelThreshold: 20
       }
     });
+
+    // Initialise filter API.
+    var filter = sigma.plugins.filter(s);
+
+    // Min degree updater
+    function apply_min_degree(e) {
+
+      var v = e.target.value;
+      document.getElementById("min-degree-val").textContent = v;
+
+      filter.undo('min-degree');
+      filter.nodesBy(
+        function(n, options) {
+          return this.graph.degree(n.id) >= options.minDegreeVal;
+        },
+        {
+          minDegreeVal: +v
+        },
+        'min-degree'
+      );
+      filter.apply();
+  }
 
 // 192.168.255.10 10.200.0.2 10.201.0.2 172.31.3.75 172.31.9.101 71.6.216.52
 
@@ -267,11 +296,9 @@
 
 	for (var sn in seen) {
           create_ip_link("output", sn);
-	}
+        }
 
-
-        s.refresh();
-        sigma.layouts.startForceLink();
+        update(s.graph);
 
     }
 
@@ -518,7 +545,10 @@ dragListener.bind('drop', function(event) {
 });
 dragListener.bind('dragend', function(event) {
   console.log(event);
-});
+    });
+
+// FIXME: Doesn't work on IE?
+document.getElementById("min-degree").addEventListener("input", apply_min_degree);
 
 // Configure the ForceLink algorithm:
 var fa = sigma.layouts.configForceLink(s, {
@@ -536,5 +566,28 @@ fa.bind('start stop', function(e) {
 // Start the ForceLink algorithm:
 sigma.layouts.startForceLink();
 
+function update(graph) {
+
+  // Iterate to get maxium degree
+  var max_degree = 0;
+
+  // Iterate over nodes
+  graph.nodes().forEach(function(n) {
+    max_degree = Math.max(max_degree, graph.degree(n.id));
+  })
+
+  // min degree
+  document.getElementById("min-degree").max = max_degree;
+  document.getElementById("max-degree-val").textContent = max_degree;
+
+  s.refresh();
+
+  // Start the ForceLink algorithm:
+  sigma.layouts.startForceLink();
+
+}
+
+update(s.graph);
+    
   </script>
 </html>
