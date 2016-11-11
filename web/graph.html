@@ -1,5 +1,9 @@
+<!DOCTYPE html>
 <html>
   <head>
+    
+    <title>Trust Analytics</title>
+    
     <!-- START SIGMA IMPORTS -->
     <script src="linkurious/src/sigma.core.js"></script>
     <script src="linkurious/src/conrad.js"></script>
@@ -58,7 +62,8 @@
     <script src="linkurious/plugins/sigma.plugins.keyboard/sigma.plugins.keyboard.js"></script>
     <script src="linkurious/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
 
-    <style>
+    <style type="text/css">
+        html, body { height: 100%; width: 100%; margin: 0; }
 	#graph-container {
 	  width: 98%;
 	  height: 60%;
@@ -75,11 +80,10 @@
     </style>
 
   </head>
+  
   <body>
     
-    <div id="container">
-      <div id="graph-container">
-      </div>
+    <div id="graph-container">
     </div>
 
     <div>
@@ -90,19 +94,23 @@
       </div>
       <div>Min degree:
 	0
-	<input id="min-degree-val" type="input" size="6" value="0">
+	<input id="min-degree-dec" type="submit" value="-">
 	<input id="min-degree" type="range" min="0" max="0" value="0">
-	<span id="max-degree-val">0</span>
+	<span id="max-degree-label">0</span>
+	<input id="min-degree-inc" type="submit" value="+">
+	<input id="min-degree-val" type="text" size="6" value="0">
       </div>
     </div>
 
     <div id="output">
     </div>
-  </body>
-  <script language="javascript">
+
+    <script>
 
     var nodes = {};
     var edges = {};
+
+    var max_degree = 0;
 
     var g = {
       nodes: [],
@@ -534,35 +542,51 @@
     document.getElementById("query_ip_flows").onclick = query_ip_flows;
     document.getElementById("query_ip_ports").onclick = query_ip_ports;
 
+    document.getElementById("min-degree-dec").onclick = function() {
+      var v = document.getElementById("min-degree").value;
+      v = parseInt(v) - 1;
+      if (v < 0) { v = 0; }
+      document.getElementById("min-degree").value = v
+      document.getElementById("min-degree-val").value = v
+      apply_min(v);    
+    }
+
+    document.getElementById("min-degree-inc").onclick = function() {
+      var v = document.getElementById("min-degree").value;
+      v = parseInt(v) + 1;
+      if (v > max_degree) { v = max_degree; }
+      document.getElementById("min-degree").value = v
+      document.getElementById("min-degree-val").value = v
+      apply_min(v);    
+    }
+        
     document.getElementById("address").value = "107.178.254.65";
 
 // Bind the events:
 s.bind('clickNode doubleClickNode rightClickNode', function(e) {
-  console.log(e.type, e.data.node.label, e.data.captor);
   document.getElementById("address").value = e.data.node.id;
 });
+
 s.bind('clickEdge doubleClickEdge rightClickEdge', function(e) {
-  console.log(e.type, e.data.edge, e.data.captor);
 });
+
 s.bind('clickStage doubleClickStage rightClickStage', function(e) {
-  console.log(e.type, e.data.captor);
 });
+
 s.bind('hovers', function(e) {
-  console.log(e.type, e.data.captor, e.data);
 });
 
 dragListener.bind('startdrag', function(event) {
-  console.log(event);
 });
+
 dragListener.bind('drag', function(event) {
-  console.log(event);
 });
+
 dragListener.bind('drop', function(event) {
-  console.log(event);
 });
+
 dragListener.bind('dragend', function(event) {
-  console.log(event);
-    });
+});
 
 // FIXME: Doesn't work on IE?
 document.getElementById("min-degree").addEventListener("input", min_range_changed);
@@ -578,7 +602,6 @@ var fa = sigma.layouts.configForceLink(s, {
 
 // Bind the events:
 fa.bind('start stop', function(e) {
-//  console.log(e.type);
 });
 
 // Start the ForceLink algorithm:
@@ -587,7 +610,6 @@ sigma.layouts.startForceLink();
 function update(graph) {
 
   // Iterate to get maxium degree
-  var max_degree = 0;
 
   // Iterate over nodes
   graph.nodes().forEach(function(n) {
@@ -596,7 +618,11 @@ function update(graph) {
 
   // min degree
   document.getElementById("min-degree").max = max_degree;
-  document.getElementById("max-degree-val").textContent = max_degree;
+  document.getElementById("max-degree-label").textContent = max_degree;
+
+  document.getElementById("min-degree").value = 0;
+  document.getElementById("min-degree-val").value = 0;
+  apply_min(0);
 
   s.refresh();
 
@@ -607,5 +633,7 @@ function update(graph) {
 
 update(s.graph);
     
-  </script>
+    </script>
+
+  </body>
 </html>
